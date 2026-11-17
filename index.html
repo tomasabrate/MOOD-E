@@ -1,0 +1,1472 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>MOOD-E · Interfaz Facial</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap">
+  <style>
+    :root {
+      --bg: #000000;
+      --accent: #37CDBE;
+      --accent-glow: rgba(55, 205, 190, 0.22);
+      --text: rgba(240, 248, 248, 0.88);
+      --muted: rgba(200, 220, 222, 0.56);
+      --panel: rgba(16, 20, 24, 0.88);
+      --border: rgba(255, 255, 255, 0.12);
+      --font-display: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow: hidden;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .stage {
+      position: relative;
+      width: 100%;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-top: max(20px, env(safe-area-inset-top, 0px));
+      padding-bottom: max(24px, env(safe-area-inset-bottom, 0px));
+      padding-left: max(16px, env(safe-area-inset-left, 0px));
+      padding-right: max(16px, env(safe-area-inset-right, 0px));
+      background: #000000;
+    }
+
+    /* Resplandor ambiental centrado detras de los ojos; bordes siguen negro puro OLED */
+    .ambient-glow {
+      position: absolute;
+      width: min(86vw, 420px);
+      height: min(86vw, 420px);
+      top: 44%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-glow) 0%, rgba(0, 0, 0, 0) 68%);
+      pointer-events: none;
+      transition: background 0.7s ease, opacity 0.7s ease, transform 0.8s ease;
+      opacity: 0.9;
+    }
+
+    .face-wrap {
+      position: relative;
+      z-index: 2;
+      width: min(86vw, 360px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      margin-top: -3dvh;
+      cursor: pointer;
+    }
+
+    .face-svg {
+      width: 100%;
+      height: auto;
+      overflow: visible;
+      filter: drop-shadow(0 0 18px var(--accent-glow));
+      transition: filter 0.6s ease;
+    }
+
+    /* Halo de respiracion guiada */
+    .breath-ring-wrap {
+      position: relative;
+      width: 112px;
+      height: 112px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.7);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+      pointer-events: none;
+      margin-top: -8px;
+      margin-bottom: -14px;
+    }
+
+    .breath-ring-wrap.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .breath-orb {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      background: radial-gradient(circle, color-mix(in srgb, var(--accent) 32%, transparent) 0%, transparent 72%);
+      box-shadow: 0 0 24px var(--accent-glow), inset 0 0 14px var(--accent-glow);
+      will-change: transform, opacity;
+    }
+
+    .breath-phase {
+      position: absolute;
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    /* Visualizador de voz / estado */
+    .wave {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      height: 30px;
+      opacity: 0.85;
+      transition: opacity 0.35s ease;
+    }
+
+    .wave.hidden {
+      opacity: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    .wave span {
+      display: block;
+      width: 4px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+      transition: background 0.5s ease;
+      will-change: height, opacity;
+    }
+
+    /* Subtitulo empatico */
+    .caption {
+      font-family: var(--font-display);
+      font-size: clamp(16px, 4.4vw, 20px);
+      font-weight: 700;
+      line-height: 1.38;
+      text-align: center;
+      color: var(--text);
+      max-width: 300px;
+      min-height: 2.8em;
+      margin: 0;
+      padding: 0 8px;
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      text-wrap: balance;
+    }
+
+    .caption.fade {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+
+    .caption.is-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Indicador minimo de microfono / estado arriba (alejado del borde superior que tapa la maqueta) */
+    .top-badge {
+      position: absolute;
+      top: max(8dvh, 52px);
+      left: 50%;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(14, 18, 22, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 4;
+    }
+
+    .top-badge.visible {
+      opacity: 1;
+    }
+
+    .top-badge .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse-dot 1.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(0.72); opacity: 0.45; }
+    }
+
+    /* Barra inferior ultra discreta, subida para no quedar tapada por el marco de la maqueta */
+    .bottom-bar {
+      position: absolute;
+      bottom: max(11dvh, 72px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      opacity: 0.14;
+      transition: opacity 0.45s ease;
+    }
+
+    .bottom-bar:hover,
+    .bottom-bar:has(:focus-visible),
+    .bottom-bar.active {
+      opacity: 0.92;
+    }
+
+    .ico {
+      width: 14px;
+      height: 14px;
+      flex: none;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.85;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .hud-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      background: rgba(14, 16, 19, 0.42);
+      color: rgba(255, 255, 255, 0.72);
+      border-radius: 999px;
+      padding: 6px 11px;
+      font: 600 11px var(--font-body);
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .hud-trigger:hover {
+      color: rgba(255, 255, 255, 0.95);
+      border-color: rgba(255, 255, 255, 0.22);
+    }
+
+    .hud-trigger[aria-pressed="true"] {
+      color: rgba(255, 255, 255, 0.85);
+      border-color: color-mix(in srgb, var(--accent) 42%, rgba(255, 255, 255, 0.12));
+      background: rgba(14, 16, 19, 0.5);
+    }
+
+    .bottom-bar:hover .hud-trigger[aria-pressed="true"],
+    .bottom-bar.active .hud-trigger[aria-pressed="true"] {
+      color: #ffffff;
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 22%, rgba(14, 16, 19, 0.78));
+      box-shadow: 0 0 14px var(--accent-glow);
+    }
+
+    /* Panel flotante de control para la demo */
+    .hud-dock {
+      position: absolute;
+      left: 50%;
+      bottom: max(11dvh, 72px);
+      transform: translate(-50%, 16px);
+      width: min(92vw, 396px);
+      max-height: 74dvh;
+      overflow-y: auto;
+      z-index: 12;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 14px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .hud-dock.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, 0);
+    }
+
+    .dock-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 2px;
+    }
+
+    .dock-title {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.72);
+    }
+
+    .dock-close {
+      border: 0;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.8);
+      border-radius: 999px;
+      padding: 5px 11px;
+      font: 600 12px var(--font-body);
+      cursor: pointer;
+    }
+
+    .states-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .state-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 9px 4px;
+      min-height: 52px;
+      border-radius: 13px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: rgba(240, 248, 248, 0.88);
+      font: 600 11.5px var(--font-body);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.12s;
+    }
+
+    .state-btn:active {
+      transform: scale(0.96);
+    }
+
+    .state-btn .swatch {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--btn-c, var(--accent));
+      box-shadow: 0 0 8px var(--btn-c, var(--accent));
+    }
+
+    .state-btn[aria-pressed="true"] {
+      background: color-mix(in srgb, var(--btn-c, var(--accent)) 20%, rgba(255, 255, 255, 0.04));
+      border-color: var(--btn-c, var(--accent));
+      color: #ffffff;
+    }
+
+    .dock-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .tool-chip {
+      flex: 1 1 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 8px 10px;
+      min-height: 36px;
+      border-radius: 11px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(240, 248, 248, 0.85);
+      font: 600 12px var(--font-body);
+      text-decoration: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .tool-chip[aria-pressed="true"] {
+      background: color-mix(in srgb, var(--accent) 24%, transparent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    @media (max-width: 360px) {
+      .states-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage" id="stage">
+    <div class="ambient-glow" id="ambient-glow"></div>
+
+    <div class="top-badge" id="top-badge" aria-live="polite">
+      <span class="dot"></span>
+      <span id="badge-text">Escuchando micrófono</span>
+    </div>
+
+    <div class="face-wrap" id="face-wrap" role="button" tabindex="0" aria-label="Rostro de MOOD-E. Tocá para interactuar.">
+      <svg class="face-svg" id="face-svg" viewBox="0 0 320 210" aria-hidden="true">
+        <defs>
+          <clipPath id="clip-left">
+            <rect id="clip-rect-l" x="58" y="45" width="76" height="114" rx="38"></rect>
+          </clipPath>
+          <clipPath id="clip-right">
+            <rect id="clip-rect-r" x="186" y="45" width="76" height="114" rx="38"></rect>
+          </clipPath>
+          <filter id="cheek-blur" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6"></feGaussianBlur>
+          </filter>
+        </defs>
+
+        <g id="head-group" transform="translate(0 0)">
+          <!-- Rubor sutil para alegria / empatia -->
+          <ellipse id="cheek-l" cx="72" cy="148" rx="18" ry="9" fill="#FF7B66" opacity="0" filter="url(#cheek-blur)"></ellipse>
+          <ellipse id="cheek-r" cx="248" cy="148" rx="18" ry="9" fill="#FF7B66" opacity="0" filter="url(#cheek-blur)"></ellipse>
+
+          <!-- OJO IZQUIERDO -->
+          <g id="eye-l-group" transform="translate(96 102)">
+            <g id="eye-l-scale" transform="scale(1 1)" clip-path="url(#clip-left)">
+              <rect id="eye-l-base" x="-38" y="-51" width="76" height="102" rx="38" fill="#38D9C8"></rect>
+              <!-- Brillo superior OLED sutil -->
+              <ellipse id="eye-l-sheen" cx="-10" cy="-22" rx="10" ry="15" fill="#FFFFFF" opacity="0.22" transform="rotate(-14 -10 -22)"></ellipse>
+              <!-- Parpados negros simetricos para parpadeo, descanso, empatia y sonrisa -->
+              <path id="lid-top-l" d="M-50 -70 L50 -70 L50 -68 L-50 -68 Z" fill="#000000"></path>
+              <path id="lid-bot-l" d="M-50 70 L50 70 L50 68 L-50 68 Z" fill="#000000"></path>
+            </g>
+          </g>
+
+          <!-- OJO DERECHO -->
+          <g id="eye-r-group" transform="translate(224 102)">
+            <g id="eye-r-scale" transform="scale(1 1)" clip-path="url(#clip-right)">
+              <rect id="eye-r-base" x="-38" y="-51" width="76" height="102" rx="38" fill="#38D9C8"></rect>
+              <ellipse id="eye-r-sheen" cx="-10" cy="-22" rx="10" ry="15" fill="#FFFFFF" opacity="0.22" transform="rotate(-14 -10 -22)"></ellipse>
+              <path id="lid-top-r" d="M-50 -70 L50 -70 L50 -68 L-50 -68 Z" fill="#000000"></path>
+              <path id="lid-bot-r" d="M-50 70 L50 70 L50 68 L-50 68 Z" fill="#000000"></path>
+            </g>
+          </g>
+        </g>
+      </svg>
+
+      <!-- Orbe de respiracion guiada (visible solo en modo respirar) -->
+      <div class="breath-ring-wrap" id="breath-ring-wrap" aria-hidden="true">
+        <div class="breath-orb" id="breath-orb"></div>
+        <span class="breath-phase" id="breath-phase"></span>
+      </div>
+
+      <!-- Onda de audio / estado -->
+      <div class="wave" id="wave" aria-hidden="true"></div>
+
+      <!-- Frase empatica corta -->
+      <p class="caption" id="caption" aria-live="polite"></p>
+    </div>
+
+    <div class="bottom-bar" id="bottom-bar">
+      <button class="hud-trigger" id="btn-default" type="button" aria-label="Volver al estado por defecto">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+        <span>Default</span>
+      </button>
+      <button class="hud-trigger" id="btn-auto-quick" type="button" aria-pressed="false" aria-label="Cambiar entre estados automáticamente">
+        <svg class="ico" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+        <span>Auto</span>
+      </button>
+      <button class="hud-trigger" id="hud-trigger" type="button" aria-label="Abrir controles de la maqueta">
+        <svg class="ico" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>
+      </button>
+    </div>
+
+    <section class="hud-dock" id="hud-dock" aria-label="Controles de maqueta MOOD-E">
+      <div class="dock-head">
+        <span class="dock-title">MOOD-E · Control de maqueta</span>
+        <button class="dock-close" id="dock-close" type="button">Ocultar</button>
+      </div>
+
+      <div class="states-grid" id="states-grid">
+        <button class="state-btn" data-state="calm" style="--btn-c:#38D9C8" aria-pressed="true">
+          <span class="swatch"></span>Calma
+        </button>
+        <button class="state-btn" data-state="listen" style="--btn-c:#5CE8FA" aria-pressed="false">
+          <span class="swatch"></span>Escucha
+        </button>
+        <button class="state-btn" data-state="empathy" style="--btn-c:#68C8F8" aria-pressed="false">
+          <span class="swatch"></span>Empatía
+        </button>
+        <button class="state-btn" data-state="happy" style="--btn-c:#4AE8B4" aria-pressed="false">
+          <span class="swatch"></span>Alegría
+        </button>
+        <button class="state-btn" data-state="tired" style="--btn-c:#F2B45A" aria-pressed="false">
+          <span class="swatch"></span>Pausa
+        </button>
+        <button class="state-btn" data-state="breath" style="--btn-c:#45CBE8" aria-pressed="false">
+          <span class="swatch"></span>Respirar
+        </button>
+        <button class="state-btn" data-state="group" style="--btn-c:#52DFC4" aria-pressed="false">
+          <span class="swatch"></span>Grupal
+        </button>
+        <button class="state-btn" id="btn-pet" style="--btn-c:#7CEAD0" type="button">
+          <span class="swatch"></span>Reacción
+        </button>
+      </div>
+
+      <div class="dock-tools">
+        <button class="tool-chip" id="btn-mic" type="button" aria-pressed="false">
+          <svg class="ico" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2"/></svg>
+          <span>Mic</span>
+        </button>
+        <button class="tool-chip" id="btn-auto" type="button" aria-pressed="false">
+          <svg class="ico" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+          <span>Auto</span>
+        </button>
+        <button class="tool-chip" id="btn-text" type="button" aria-pressed="true">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Texto</span>
+        </button>
+        <button class="tool-chip" id="btn-full" type="button" aria-pressed="false">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          <span>Pantalla</span>
+        </button>
+        <a class="tool-chip" href="./mood-e.html">
+          <svg class="ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 18v3"/></svg>
+          <span>Simulador</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const $ = (s) => document.querySelector(s);
+      const $$ = (s) => Array.from(document.querySelectorAll(s));
+
+      // Definicion visual y de animacion para cada estado emocional de MOOD-E
+      // Coordenadas de parpados normalizadas (-1 borde superior, 0 centro, +1 borde inferior)
+      // Parametros simetricos (Outer/Inner) garantizan ojos espejados y amigables
+      const EMOTIONS = {
+        calm: {
+          color: '#38D9C8',
+          glow: 'rgba(56, 217, 200, 0.24)',
+          w: 76, h: 102, rx: 38,
+          topOuter: -1.18, topInner: -1.18, topArch: 0,
+          botOuter: 1.18, botInner: 1.18, botArch: 0,
+          sheenOpacity: 0.22, cheekOpacity: 0,
+          blinkRate: [3200, 6200],
+          gazeAmp: 10,
+          waveMode: 'idle',
+          phrases: [
+            'Estoy acá acompañándote. Todo tranquilo por ahora.',
+            'Ritmo estable. Seguí a tu tiempo.',
+            'Cuando necesites frenar o charlar, contá conmigo.',
+            'Vas bien. No hace falta apurarse de más.',
+            'Sigo atento al escritorio por si cambia tu ritmo.',
+            'Respirá cómodo, tenés margen para avanzar.',
+            'Acá estoy: acompañando sin interrumpir.',
+            'Paso a paso se ordena cualquier entrega.'
+          ]
+        },
+        listen: {
+          color: '#5CE8FA',
+          glow: 'rgba(92, 232, 250, 0.28)',
+          w: 84, h: 116, rx: 42,
+          topOuter: -1.18, topInner: -1.18, topArch: 0,
+          botOuter: 1.18, botInner: 1.18, botArch: 0,
+          sheenOpacity: 0.26, cheekOpacity: 0,
+          blinkRate: [3600, 6800],
+          gazeAmp: 13,
+          waveMode: 'listen',
+          phrases: [
+            'Te escucho sin interrumpir. Contame qué te traba.',
+            'Estoy atento a lo que sentís. Tomate tu tiempo.',
+            'Sigo acá. Decilo con tus palabras.',
+            'Prestándote atención plena, sin juzgar.',
+            'Te sigo: ¿qué parte es la que más te cuesta hoy?',
+            'A veces ordenar en voz alta destraba la idea.',
+            'Escucho tu tono y tu ritmo; no estás solo en esto.',
+            'Tómate un segundo para decir exactamente lo que pensás.'
+          ]
+        },
+        empathy: {
+          color: '#68C8F8',
+          glow: 'rgba(104, 200, 248, 0.25)',
+          w: 78, h: 100, rx: 39,
+          // Parpado superior suavemente inclinado en espejo y base levemente acolchada: calma y comprension
+          topOuter: -0.06, topInner: -0.62, topArch: 0.08,
+          botOuter: 0.54, botInner: 0.72, botArch: -0.34,
+          sheenOpacity: 0.2, cheekOpacity: 0.2,
+          blinkRate: [3000, 5400],
+          gazeAmp: 6,
+          waveMode: 'soft',
+          phrases: [
+            'Parece frustrante. Es lógico que te pese.',
+            'Te entiendo. ¿Dividimos esto en un primer paso chico?',
+            'No tenés que resolverlo todo junto. Estoy con vos.',
+            'Es válido sentirse trabado después de tanto esfuerzo.',
+            'Primero bajemos un cambio; después vemos por dónde seguir.',
+            'Lo que sentís tiene sentido cuando la carga es alta.',
+            'Probemos con una meta mínima de cinco minutos.',
+            'Acá no hay apuro ni juicio: vamos despacio.'
+          ]
+        },
+        happy: {
+          color: '#4AE8B4',
+          glow: 'rgba(74, 232, 180, 0.28)',
+          w: 84, h: 104, rx: 42,
+          topOuter: -1.18, topInner: -1.18, topArch: 0,
+          // Parpado inferior sube en arco amigable formando ojos felices ^ ^
+          botOuter: 0.18, botInner: 0.18, botArch: -1.35,
+          sheenOpacity: 0.18, cheekOpacity: 0.45,
+          blinkRate: [4200, 7500],
+          gazeAmp: 7,
+          waveMode: 'joy',
+          phrases: [
+            '¡Qué bueno escucharte así! Vamos paso a paso.',
+            'Me alegra acompañar este momento.',
+            'Tu aporte suma muchísimo al equipo.',
+            '¡Excelente avance! Disfrutá ese logro.',
+            'Se nota más liviano el ritmo ahora.',
+            'Qué buena energía cuando las ideas fluyen.',
+            'Celebrar los avances chicos también recarga pilas.',
+            'Así da gusto compartir la jornada.'
+          ]
+        },
+        tired: {
+          color: '#F2B45A',
+          glow: 'rgba(242, 180, 90, 0.23)',
+          w: 78, h: 96, rx: 39,
+          // Parpados horizontales caidos a media altura
+          topOuter: -0.05, topInner: -0.05, topArch: 0.12,
+          botOuter: 1.18, botInner: 1.18, botArch: 0,
+          sheenOpacity: 0.14, cheekOpacity: 0,
+          blinkRate: [2200, 4200],
+          gazeAmp: 4,
+          waveMode: 'slow',
+          phrases: [
+            'Llevás mucho tiempo seguido. ¿Estiramos dos minutos?',
+            'Noto cansancio. Una pausa corta ayuda a despejar.',
+            'Frenar un minuto también es avanzar.',
+            '¿Tomamos un poco de agua antes de seguir?',
+            'Soltá los hombros y mirá lejos de la pantalla un momento.',
+            'Descansar a tiempo evita saturarse.',
+            'Cinco minutos de aire fresco cambian la tarde.',
+            'Tu mente rinde mejor cuando le das respiro.'
+          ]
+        },
+        breath: {
+          color: '#45CBE8',
+          glow: 'rgba(69, 203, 232, 0.24)',
+          w: 82, h: 94, rx: 41,
+          // Ojos cerrados serenos en arco hacia abajo ◡ ◡
+          topOuter: -0.15, topInner: -0.15, topArch: 1.10,
+          botOuter: 0.15, botInner: 0.15, botArch: 0.90,
+          sheenOpacity: 0, cheekOpacity: 0.14,
+          blinkRate: [999999, 999999],
+          gazeAmp: 0,
+          waveMode: 'hidden',
+          phrases: [
+            'Inhalá despacio…',
+            'Exhalá soltando el aire…'
+          ]
+        },
+        group: {
+          color: '#52DFC4',
+          glow: 'rgba(82, 223, 196, 0.25)',
+          w: 78, h: 106, rx: 39,
+          topOuter: -1.18, topInner: -1.18, topArch: 0,
+          botOuter: 0.88, botInner: 0.88, botArch: -0.15,
+          sheenOpacity: 0.22, cheekOpacity: 0.12,
+          blinkRate: [3000, 5600],
+          gazeAmp: 18,
+          waveMode: 'listen',
+          phrases: [
+            'Alguien lleva un rato en silencio. ¿Le damos la palabra?',
+            'Cuidemos los turnos para que todas las voces sumen.',
+            'Tu compañero tiene una idea para compartir.',
+            'Escuchemos antes de interrumpir; cada mirada aporta.',
+            '¿Qué opina quien todavía no habló?',
+            'Reformular lo que dijo el otro construye confianza.',
+            'Lo privado queda con vos; al grupo solo llega el clima.',
+            'Un equipo empático cuida que nadie quede afuera.'
+          ]
+        }
+      };
+
+      // Estado animado interpolado (spring / lerp suave a 60fps)
+      const anim = {
+        w: 76, h: 102, rx: 38,
+        topOuter: -1.18, topInner: -1.18, topArch: 0,
+        botOuter: 1.18, botInner: 1.18, botArch: 0,
+        sheenOpacity: 0.22, cheekOpacity: 0,
+        gazeX: 0, gazeY: 0, targetGazeX: 0, targetGazeY: 0,
+        headX: 0, headY: 0, headTilt: 0,
+        squashX: 1, squashY: 1,
+        blink: 0, winkL: 0, winkR: 0,
+        r: 56, g: 217, b: 200
+      };
+
+      let currentState = 'calm';
+      let petUntil = 0;
+      let nextBlinkAt = performance.now() + 2600;
+      let blinkPhase = 0; // 0: idle, >0: blinking
+      let doubleBlinkQueued = false;
+      let nextGazeAt = performance.now() + 1800;
+      let idleAction = null;
+      let idleStart = 0;
+      let idleUntil = 0;
+      let idleLookDir = 1;
+      let nextIdleAt = performance.now() + 5000;
+      let lastPhrase = '';
+      let phraseTimer = null;
+      let autoDemo = false;
+      let autoDemoTimer = null;
+      let badgeHideTimer = null;
+      let showText = true;
+      let micActive = false;
+      let micStream = null;
+      let micAnalyser = null;
+      let micData = null;
+      let micLevel = 0;
+      let voiceListenUntil = 0;
+      let wakeLock = null;
+      let hudHideTimer = null;
+
+      // Construir barras de onda
+      const waveEl = $('#wave');
+      const BAR_COUNT = 13;
+      const waveBars = [];
+      for (let i = 0; i < BAR_COUNT; i++) {
+        const sp = document.createElement('span');
+        waveEl.appendChild(sp);
+        waveBars.push(sp);
+      }
+
+      // Elementos SVG
+      const els = {
+        root: document.documentElement,
+        glow: $('#ambient-glow'),
+        faceWrap: $('#face-wrap'),
+        faceSvg: $('#face-svg'),
+        headGroup: $('#head-group'),
+        eyeLG: $('#eye-l-group'),
+        eyeRG: $('#eye-r-group'),
+        eyeLScale: $('#eye-l-scale'),
+        eyeRScale: $('#eye-r-scale'),
+        clipRectL: $('#clip-rect-l'),
+        clipRectR: $('#clip-rect-r'),
+        eyeLBase: $('#eye-l-base'),
+        eyeRBase: $('#eye-r-base'),
+        eyeLSheen: $('#eye-l-sheen'),
+        eyeRSheen: $('#eye-r-sheen'),
+        lidTopL: $('#lid-top-l'),
+        lidTopR: $('#lid-top-r'),
+        lidBotL: $('#lid-bot-l'),
+        lidBotR: $('#lid-bot-r'),
+        cheekL: $('#cheek-l'),
+        cheekR: $('#cheek-r'),
+        breathWrap: $('#breath-ring-wrap'),
+        breathOrb: $('#breath-orb'),
+        breathPhase: $('#breath-phase'),
+        caption: $('#caption'),
+        topBadge: $('#top-badge'),
+        badgeText: $('#badge-text'),
+        bottomBar: $('#bottom-bar'),
+        btnDefault: $('#btn-default'),
+        btnAutoQuick: $('#btn-auto-quick'),
+        hudTrigger: $('#hud-trigger'),
+        hudDock: $('#hud-dock')
+      };
+
+      function hexToRgb(hex) {
+        const n = parseInt(hex.slice(1), 16);
+        return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+      }
+
+      function lerp(a, b, t) {
+        return a + (b - a) * t;
+      }
+
+      function setCaption(text) {
+        if (!showText) return;
+        els.caption.classList.add('fade');
+        setTimeout(() => {
+          els.caption.textContent = text;
+          els.caption.classList.remove('fade');
+        }, 180);
+      }
+
+      function updateThemeVars(emotion) {
+        els.root.style.setProperty('--accent', emotion.color);
+        els.root.style.setProperty('--accent-glow', emotion.glow);
+      }
+
+      function setState(name, opts = {}) {
+        if (!EMOTIONS[name]) return;
+        currentState = name;
+        const em = EMOTIONS[name];
+        updateThemeVars(em);
+
+        // Squash & stretch al cambiar de estado
+        anim.squashX = 1.09;
+        anim.squashY = 0.91;
+
+        // Actualizar botones del dock
+        $$('[data-state]').forEach((b) => {
+          b.setAttribute('aria-pressed', String(b.getAttribute('data-state') === name));
+        });
+
+        // Mostrar u ocultar elementos especificos
+        const isBreath = name === 'breath';
+        els.breathWrap.classList.toggle('active', isBreath);
+        waveEl.classList.toggle('hidden', em.waveMode === 'hidden');
+
+        // Rotacion de frases empaticas aleatorias sin repetir la inmediata
+        clearInterval(phraseTimer);
+        if (!isBreath) {
+          function pickPhrase(list) {
+            if (!list || !list.length) return '';
+            if (list.length === 1) return list[0];
+            let candidate = list[Math.floor(Math.random() * list.length)];
+            let guard = 0;
+            while (candidate === lastPhrase && guard++ < 6) {
+              candidate = list[Math.floor(Math.random() * list.length)];
+            }
+            lastPhrase = candidate;
+            return candidate;
+          }
+          setCaption(pickPhrase(em.phrases));
+          phraseTimer = setInterval(() => {
+            if (currentState !== name || !showText) return;
+            setCaption(pickPhrase(em.phrases));
+          }, 4800);
+        }
+
+        if (!opts.keepHud) scheduleHudHide();
+      }
+
+      function triggerPet() {
+        petUntil = performance.now() + 1500;
+        anim.squashX = 1.13;
+        anim.squashY = 0.87;
+        blinkPhase = 0.001;
+        if (currentState !== 'breath') {
+          setCaption('Acá estoy, con vos.');
+        }
+      }
+
+      // Loop principal de animacion a 60fps
+      let lastTs = performance.now();
+      let breathCycleStart = performance.now();
+
+      function tick(now) {
+        const dt = Math.min(0.05, (now - lastTs) / 1000);
+        lastTs = now;
+        const t = now / 1000;
+
+        // Determinar emocion activa + micro-animaciones espontaneas en Default y Auto
+        let activeKey = currentState;
+        if (now < petUntil) {
+          activeKey = 'happy';
+        } else if (micActive && currentState === 'calm' && now < voiceListenUntil) {
+          activeKey = 'listen';
+        } else if (currentState === 'calm' || (autoDemo && currentState !== 'breath')) {
+          if (now >= nextIdleAt) {
+            const pool = currentState === 'calm'
+              ? ['curious', 'smile', 'sigh', 'winkL', 'winkR', 'lookAround', 'nod']
+              : ['curious', 'lookAround', 'nod', 'winkL', 'winkR'];
+            idleAction = pool[Math.floor(Math.random() * pool.length)];
+            idleStart = now;
+            idleLookDir = Math.random() < 0.5 ? -1 : 1;
+            const dur = idleAction === 'lookAround' ? 2300
+              : (idleAction === 'winkL' || idleAction === 'winkR') ? 850
+              : idleAction === 'nod' ? 1400
+              : 1750;
+            idleUntil = now + dur;
+            nextIdleAt = idleUntil + (autoDemo ? (8000 + Math.random() * 6000) : (5500 + Math.random() * 5500));
+
+            if (idleAction === 'curious') {
+              anim.targetGazeX = idleLookDir * 15;
+              anim.targetGazeY = -5;
+              doubleBlinkQueued = true;
+              blinkPhase = 0.001;
+            } else if (idleAction === 'smile') {
+              anim.squashX = 1.07;
+              anim.squashY = 0.93;
+            } else if (idleAction === 'nod') {
+              blinkPhase = 0.001;
+            }
+          }
+          if (now < idleUntil) {
+            if (idleAction === 'lookAround') {
+              const half = idleStart + 1150;
+              anim.targetGazeX = (now < half ? idleLookDir : -idleLookDir) * 16;
+              anim.targetGazeY = now < half ? -2 : 2;
+            } else if (idleAction === 'smile' && currentState === 'calm') {
+              activeKey = 'happy';
+            } else if (idleAction === 'sigh' && currentState === 'calm') {
+              activeKey = 'breath';
+            }
+          } else {
+            idleAction = null;
+          }
+        } else {
+          idleAction = null;
+        }
+        const target = EMOTIONS[activeKey];
+
+        // Lectura de microfono ambiental si esta activo
+        if (micActive && micAnalyser && micData) {
+          micAnalyser.getByteTimeDomainData(micData);
+          let sum = 0;
+          for (let i = 0; i < micData.length; i++) {
+            const v = (micData[i] - 128) / 128;
+            sum += v * v;
+          }
+          const rms = Math.sqrt(sum / micData.length);
+          const boosted = Math.min(1, rms * 5.2);
+          micLevel = lerp(micLevel, boosted, 0.28);
+          if (boosted > 0.14) {
+            voiceListenUntil = now + 2200;
+          }
+        } else {
+          micLevel = lerp(micLevel, 0, 0.15);
+        }
+
+        // Interpolacion suave de geometria y color
+        const k = 1 - Math.pow(0.0012, dt);
+        anim.w = lerp(anim.w, target.w, k);
+        anim.h = lerp(anim.h, target.h, k);
+        anim.rx = lerp(anim.rx, target.rx, k);
+        anim.topOuter = lerp(anim.topOuter, target.topOuter, k);
+        anim.topInner = lerp(anim.topInner, target.topInner, k);
+        anim.topArch = lerp(anim.topArch, target.topArch, k);
+        anim.botOuter = lerp(anim.botOuter, target.botOuter, k);
+        anim.botInner = lerp(anim.botInner, target.botInner, k);
+        anim.botArch = lerp(anim.botArch, target.botArch, k);
+        anim.sheenOpacity = lerp(anim.sheenOpacity, target.sheenOpacity, k);
+        anim.cheekOpacity = lerp(anim.cheekOpacity, target.cheekOpacity, k);
+
+        const [tr, tg, tb] = hexToRgb(target.color);
+        anim.r = lerp(anim.r, tr, k);
+        anim.g = lerp(anim.g, tg, k);
+        anim.b = lerp(anim.b, tb, k);
+        const colorStr = `rgb(${Math.round(anim.r)}, ${Math.round(anim.g)}, ${Math.round(anim.b)})`;
+
+        // Recuperar squash & stretch hacia (1,1)
+        anim.squashX = lerp(anim.squashX, 1, 1 - Math.pow(0.0005, dt));
+        anim.squashY = lerp(anim.squashY, 1, 1 - Math.pow(0.0005, dt));
+
+        // Mirada organica (saccades)
+        if (now >= nextGazeAt && !idleAction) {
+          if (activeKey === 'group') {
+            // En modo grupal mira alternadamente hacia integrantes a los costados
+            const side = Math.random() < 0.5 ? -1 : 1;
+            anim.targetGazeX = side * (11 + Math.random() * 7);
+            anim.targetGazeY = (Math.random() - 0.5) * 4;
+            nextGazeAt = now + 1300 + Math.random() * 1400;
+          } else {
+            const amp = target.gazeAmp;
+            const centerBias = Math.random() < 0.45 ? 0 : 1;
+            anim.targetGazeX = centerBias * (Math.random() * 2 - 1) * amp;
+            anim.targetGazeY = centerBias * (Math.random() * 2 - 1) * (amp * 0.45);
+            nextGazeAt = now + 1800 + Math.random() * 3200;
+          }
+        }
+        anim.gazeX = lerp(anim.gazeX, anim.targetGazeX, 1 - Math.pow(0.004, dt));
+        anim.gazeY = lerp(anim.gazeY, anim.targetGazeY, 1 - Math.pow(0.004, dt));
+
+        // Movimiento organico sutil de cabeza (respiracion + seguimiento de mirada + acciones idle)
+        let bobY = Math.sin(t * 1.45) * 2.8;
+        let tilt = anim.gazeX * 0.14;
+        if (idleAction === 'curious') {
+          tilt += (anim.targetGazeX >= 0 ? 1 : -1) * 6.5;
+          bobY -= 2;
+        } else if (idleAction === 'lookAround') {
+          tilt += anim.gazeX * 0.25;
+        } else if (idleAction === 'nod') {
+          bobY += Math.sin((now - idleStart) * 0.013) * 5.2;
+        } else if (idleAction === 'winkL') {
+          tilt -= 4.5;
+        } else if (idleAction === 'winkR') {
+          tilt += 4.5;
+        } else if (activeKey === 'empathy') {
+          bobY += Math.sin(t * 1.8) * 1.8;
+          tilt = Math.sin(t * 0.9) * 2.5;
+        } else if (activeKey === 'happy') {
+          bobY += Math.abs(Math.sin(t * 3.1)) * -4.2;
+        } else if (activeKey === 'tired') {
+          bobY += 4 + Math.sin(t * 0.9) * 2.0;
+          tilt = 2.0;
+        }
+        anim.headX = lerp(anim.headX, anim.gazeX * 0.35, 0.08);
+        anim.headY = lerp(anim.headY, bobY + anim.gazeY * 0.3, 0.12);
+        anim.headTilt = lerp(anim.headTilt, tilt, 0.08);
+
+        // Parpadeo natural con doble parpadeo ocasional + guinos idle
+        if (now >= nextBlinkAt && blinkPhase === 0 && activeKey !== 'breath' && !idleAction) {
+          blinkPhase = 0.001;
+          doubleBlinkQueued = Math.random() < 0.22;
+        }
+        if (blinkPhase > 0) {
+          blinkPhase += dt * (activeKey === 'tired' ? 4.2 : 6.4);
+          if (blinkPhase >= 1) {
+            blinkPhase = 0;
+            anim.blink = 0;
+            if (doubleBlinkQueued) {
+              doubleBlinkQueued = false;
+              nextBlinkAt = now + 180;
+            } else {
+              const [minB, maxB] = target.blinkRate;
+              nextBlinkAt = now + minB + Math.random() * (maxB - minB);
+            }
+          } else {
+            anim.blink = Math.sin(blinkPhase * Math.PI);
+          }
+        } else {
+          anim.blink = lerp(anim.blink, 0, 0.25);
+        }
+
+        const targetWinkL = idleAction === 'winkL' && now < idleUntil ? 0.92 : 0;
+        const targetWinkR = idleAction === 'winkR' && now < idleUntil ? 0.92 : 0;
+        anim.winkL = lerp(anim.winkL, targetWinkL, 0.28);
+        anim.winkR = lerp(anim.winkR, targetWinkR, 0.28);
+
+        // Si esta en ejercicio de respiracion guiada (solo cuando el estado elegido es 'breath')
+        if (currentState === 'breath') {
+          const cycleMs = 10000;
+          const elapsed = (now - breathCycleStart) % cycleMs;
+          let progress = 0;
+          let phaseLabel = '';
+          if (elapsed < 4000) {
+            const p = elapsed / 4000;
+            progress = 0.5 - 0.5 * Math.cos(p * Math.PI);
+            phaseLabel = 'Inhalá';
+          } else {
+            const p = (elapsed - 4000) / 6000;
+            progress = 0.5 + 0.5 * Math.cos(p * Math.PI);
+            phaseLabel = 'Exhalá';
+          }
+          const scale = 0.72 + progress * 0.88;
+          els.breathOrb.style.transform = `scale(${scale.toFixed(3)})`;
+          els.breathOrb.style.opacity = (0.55 + progress * 0.45).toFixed(2);
+          if (els.breathPhase.textContent !== phaseLabel) {
+            els.breathPhase.textContent = phaseLabel;
+            setCaption(phaseLabel === 'Inhalá' ? 'Inhalá despacio por la nariz…' : 'Exhalá lento soltando la tensión…');
+          }
+          bobY = -progress * 4;
+        } else {
+          breathCycleStart = now;
+        }
+
+        // Aplicar transformaciones al grupo cabeza y ojos
+        els.headGroup.setAttribute(
+          'transform',
+          `translate(${anim.headX.toFixed(2)} ${anim.headY.toFixed(2)}) rotate(${anim.headTilt.toFixed(2)} 160 102)`
+        );
+
+        const halfW = anim.w / 2;
+        const halfH = anim.h / 2;
+        const eyeReactScale = 1 + micLevel * 0.08;
+        const sx = anim.squashX * eyeReactScale;
+        const sy = anim.squashY * (1 - anim.blink * 0.05) * eyeReactScale;
+
+        els.eyeLG.setAttribute('transform', `translate(${(96 + anim.gazeX * 0.75).toFixed(2)} ${(102 + anim.gazeY * 0.75).toFixed(2)})`);
+        els.eyeRG.setAttribute('transform', `translate(${(224 + anim.gazeX * 0.75).toFixed(2)} ${(102 + anim.gazeY * 0.75).toFixed(2)})`);
+        els.eyeLScale.setAttribute('transform', `scale(${sx.toFixed(3)} ${sy.toFixed(3)})`);
+        els.eyeRScale.setAttribute('transform', `scale(${sx.toFixed(3)} ${sy.toFixed(3)})`);
+
+        [els.eyeLBase, els.eyeRBase, els.clipRectL, els.clipRectR].forEach((rect) => {
+          rect.setAttribute('x', (-halfW).toFixed(2));
+          rect.setAttribute('y', (-halfH).toFixed(2));
+          rect.setAttribute('width', anim.w.toFixed(2));
+          rect.setAttribute('height', anim.h.toFixed(2));
+          rect.setAttribute('rx', anim.rx.toFixed(2));
+        });
+        els.eyeLBase.setAttribute('fill', colorStr);
+        els.eyeRBase.setAttribute('fill', colorStr);
+
+        // Brillo sutil superior que sigue la mirada
+        const sxOff = (-10 + anim.gazeX * 0.28).toFixed(2);
+        const syOff = (-halfH * 0.44 + anim.gazeY * 0.24).toFixed(2);
+        els.eyeLSheen.setAttribute('cx', sxOff);
+        els.eyeLSheen.setAttribute('cy', syOff);
+        els.eyeRSheen.setAttribute('cx', sxOff);
+        els.eyeRSheen.setAttribute('cy', syOff);
+        const sOp = (anim.sheenOpacity * (1 - Math.max(anim.blink, anim.winkL))).toFixed(3);
+        const sOpR = (anim.sheenOpacity * (1 - Math.max(anim.blink, anim.winkR))).toFixed(3);
+        els.eyeLSheen.setAttribute('opacity', sOp);
+        els.eyeRSheen.setAttribute('opacity', sOpR);
+
+        els.cheekL.setAttribute('opacity', anim.cheekOpacity.toFixed(3));
+        els.cheekR.setAttribute('opacity', anim.cheekOpacity.toFixed(3));
+
+        // Calcular parpados negros simetricos (Ojo Izquierdo: outer=-x, inner=+x; Ojo Derecho: inner=-x, outer=+x)
+        const lidLimit = halfH + 16;
+        const closeL = Math.max(anim.blink, anim.winkL);
+        const closeR = Math.max(anim.blink, anim.winkR);
+
+        function buildEyeLids(closeAmt) {
+          const tO = lerp(anim.topOuter, 0.08, closeAmt) * halfH;
+          const tI = lerp(anim.topInner, 0.08, closeAmt) * halfH;
+          const tA = lerp(anim.topArch, 0.14, closeAmt) * halfH;
+          const tM = (tO + tI) * 0.5 + tA;
+
+          const bO = lerp(anim.botOuter, -0.04, closeAmt) * halfH;
+          const bI = lerp(anim.botInner, -0.04, closeAmt) * halfH;
+          const bA = lerp(anim.botArch, 0.04, closeAmt) * halfH;
+          const bM = (bO + bI) * 0.5 + bA;
+          return { tO, tI, tM, bO, bI, bM };
+        }
+
+        const L = buildEyeLids(closeL);
+        const R = buildEyeLids(closeR);
+
+        els.lidTopL.setAttribute(
+          'd',
+          `M${-halfW - 12} ${-lidLimit} L${halfW + 12} ${-lidLimit} L${halfW + 12} ${L.tI.toFixed(2)} Q0 ${L.tM.toFixed(2)} ${-halfW - 12} ${L.tO.toFixed(2)} Z`
+        );
+        els.lidTopR.setAttribute(
+          'd',
+          `M${-halfW - 12} ${-lidLimit} L${halfW + 12} ${-lidLimit} L${halfW + 12} ${R.tO.toFixed(2)} Q0 ${R.tM.toFixed(2)} ${-halfW - 12} ${R.tI.toFixed(2)} Z`
+        );
+
+        els.lidBotL.setAttribute(
+          'd',
+          `M${-halfW - 12} ${lidLimit} L${halfW + 12} ${lidLimit} L${halfW + 12} ${L.bI.toFixed(2)} Q0 ${L.bM.toFixed(2)} ${-halfW - 12} ${L.bO.toFixed(2)} Z`
+        );
+        els.lidBotR.setAttribute(
+          'd',
+          `M${-halfW - 12} ${lidLimit} L${halfW + 12} ${lidLimit} L${halfW + 12} ${R.bO.toFixed(2)} Q0 ${R.bM.toFixed(2)} ${-halfW - 12} ${R.bI.toFixed(2)} Z`
+        );
+
+        // Animar onda inferior
+        if (target.waveMode !== 'hidden') {
+          const mid = (BAR_COUNT - 1) / 2;
+          for (let i = 0; i < BAR_COUNT; i++) {
+            const dist = Math.abs(i - mid) / mid; // 0 centro, 1 bordes
+            const envelope = 1 - dist * 0.72;
+            let hBar = 4;
+            if (micActive && micLevel > 0.04) {
+              hBar = 4 + micLevel * 28 * envelope * (0.65 + 0.35 * Math.sin(t * 14 + i * 0.9));
+            } else if (target.waveMode === 'listen') {
+              hBar = 5 + (0.5 + 0.5 * Math.sin(t * 7.2 - dist * 3.2)) * 18 * envelope;
+            } else if (target.waveMode === 'joy') {
+              hBar = 5 + (0.5 + 0.5 * Math.sin(t * 6 + i * 0.7)) * 14 * envelope;
+            } else if (target.waveMode === 'soft') {
+              hBar = 4 + (0.5 + 0.5 * Math.sin(t * 2.6 + i * 0.5)) * 9 * envelope;
+            } else if (target.waveMode === 'slow') {
+              hBar = 4 + (0.5 + 0.5 * Math.sin(t * 1.4 + i * 0.4)) * 5 * envelope;
+            } else {
+              hBar = 4 + (0.5 + 0.5 * Math.sin(t * 2.2 - dist * 2.0)) * 6 * envelope;
+            }
+            waveBars[i].style.height = `${Math.max(4, hBar).toFixed(1)}px`;
+            waveBars[i].style.background = colorStr;
+            waveBars[i].style.opacity = (0.45 + 0.55 * envelope).toFixed(2);
+          }
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      // Controles del HUD
+      function openHud() {
+        els.hudDock.classList.add('open');
+        els.bottomBar.classList.add('active');
+        scheduleHudHide();
+      }
+
+      function closeHud() {
+        els.hudDock.classList.remove('open');
+        els.bottomBar.classList.remove('active');
+        clearTimeout(hudHideTimer);
+      }
+
+      function scheduleHudHide() {
+        clearTimeout(hudHideTimer);
+        hudHideTimer = setTimeout(() => {
+          closeHud();
+        }, 4500);
+      }
+
+      els.hudTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openHud();
+      });
+
+      $('#dock-close').addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeHud();
+      });
+
+      els.hudDock.addEventListener('pointerdown', () => {
+        clearTimeout(hudHideTimer);
+      });
+
+      els.hudDock.addEventListener('pointerup', () => {
+        scheduleHudHide();
+      });
+
+      // Tocar la cara de MOOD-E para reaccion alegre
+      els.faceWrap.addEventListener('click', () => {
+        if (els.hudDock.classList.contains('open')) {
+          closeHud();
+          return;
+        }
+        triggerPet();
+      });
+
+      els.faceWrap.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          triggerPet();
+        }
+      });
+
+      // Tocar el fondo negro inferior abre el dock
+      $('#stage').addEventListener('click', (e) => {
+        if (e.target === $('#stage') || e.target === els.ambientGlow) {
+          if (els.hudDock.classList.contains('open')) closeHud();
+          else openHud();
+        }
+      });
+
+      $$('[data-state]').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          stopAutoDemo();
+          setState(btn.getAttribute('data-state'), { keepHud: true });
+        });
+      });
+
+      $('#btn-pet').addEventListener('click', (e) => {
+        e.stopPropagation();
+        triggerPet();
+        scheduleHudHide();
+      });
+
+      // Toggle texto
+      const btnText = $('#btn-text');
+      btnText.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showText = !showText;
+        btnText.setAttribute('aria-pressed', String(showText));
+        els.caption.classList.toggle('is-hidden', !showText);
+        if (showText && currentState !== 'breath') {
+          setCaption(EMOTIONS[currentState].phrases[0]);
+        }
+        scheduleHudHide();
+      });
+
+      // Modo demo autonomo (va cambiando entre estados de forma aleatoria)
+      const btnAuto = $('#btn-auto');
+      const AUTO_POOL = ['calm', 'calm', 'listen', 'empathy', 'happy', 'tired', 'group'];
+
+      function stopAutoDemo() {
+        if (!autoDemo) return;
+        autoDemo = false;
+        clearTimeout(autoDemoTimer);
+        clearTimeout(badgeHideTimer);
+        btnAuto.setAttribute('aria-pressed', 'false');
+        els.btnAutoQuick.setAttribute('aria-pressed', 'false');
+        if (!els.hudDock.classList.contains('open')) {
+          els.bottomBar.classList.remove('active');
+        }
+        if (!micActive) els.topBadge.classList.remove('visible');
+      }
+
+      function pickNextAutoState() {
+        const choices = AUTO_POOL.filter((st) => st !== currentState);
+        return choices[Math.floor(Math.random() * choices.length)] || 'calm';
+      }
+
+      function scheduleNextAutoState() {
+        clearTimeout(autoDemoTimer);
+        if (!autoDemo) return;
+        const delay = 6500 + Math.random() * 3500;
+        autoDemoTimer = setTimeout(() => {
+          if (!autoDemo) return;
+          setState(pickNextAutoState(), { keepHud: true });
+          scheduleNextAutoState();
+        }, delay);
+      }
+
+      function toggleAutoDemo(keepHud) {
+        if (autoDemo) {
+          stopAutoDemo();
+        } else {
+          autoDemo = true;
+          btnAuto.setAttribute('aria-pressed', 'true');
+          els.btnAutoQuick.setAttribute('aria-pressed', 'true');
+          nextIdleAt = performance.now() + 7500;
+          setState(pickNextAutoState(), { keepHud: !!keepHud });
+          if (!keepHud) {
+            els.bottomBar.classList.remove('active');
+          }
+          if (!micActive) {
+            els.badgeText.textContent = 'Modo automático';
+            els.topBadge.classList.add('visible');
+            clearTimeout(badgeHideTimer);
+            badgeHideTimer = setTimeout(() => {
+              if (!micActive) els.topBadge.classList.remove('visible');
+            }, 2200);
+          }
+          scheduleNextAutoState();
+        }
+      }
+
+      btnAuto.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleAutoDemo(true);
+        scheduleHudHide();
+      });
+
+      els.btnAutoQuick.addEventListener('click', (e) => {
+        e.stopPropagation();
+        els.btnAutoQuick.blur();
+        toggleAutoDemo(false);
+      });
+
+      els.btnDefault.addEventListener('click', (e) => {
+        e.stopPropagation();
+        els.btnDefault.blur();
+        stopAutoDemo();
+        idleAction = null;
+        nextIdleAt = performance.now() + 2600;
+        setState('calm', { keepHud: false });
+        blinkPhase = 0.001;
+      });
+
+      // Microfono ambiental en vivo (Web Audio API)
+      const btnMic = $('#btn-mic');
+      async function toggleMic() {
+        if (micActive) {
+          micActive = false;
+          if (micStream) micStream.getTracks().forEach((tr) => tr.stop());
+          micStream = null;
+          micAnalyser = null;
+          btnMic.setAttribute('aria-pressed', 'false');
+          els.topBadge.classList.remove('visible');
+          return;
+        }
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          setCaption('Tu navegador no permite usar el micrófono acá.');
+          return;
+        }
+        try {
+          micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          const ctx = new AudioCtx();
+          const src = ctx.createMediaStreamSource(micStream);
+          micAnalyser = ctx.createAnalyser();
+          micAnalyser.fftSize = 256;
+          src.connect(micAnalyser);
+          micData = new Uint8Array(micAnalyser.frequencyBinCount);
+          micActive = true;
+          btnMic.setAttribute('aria-pressed', 'true');
+          els.badgeText.textContent = 'Micrófono activo';
+          els.topBadge.classList.add('visible');
+        } catch (err) {
+          setCaption('No se pudo activar el micrófono (revisá los permisos).');
+        }
+      }
+
+      btnMic.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMic();
+        scheduleHudHide();
+      });
+
+      // Fullscreen + Screen Wake Lock (para que el celular no se apague dentro de la maqueta)
+      const btnFull = $('#btn-full');
+      async function requestWakeLock() {
+        try {
+          if ('wakeLock' in navigator && !wakeLock) {
+            wakeLock = await navigator.wakeLock.request('screen');
+            wakeLock.addEventListener('release', () => { wakeLock = null; });
+          }
+        } catch (_) {}
+      }
+
+      btnFull.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        await requestWakeLock();
+        try {
+          if (!document.fullscreenElement) {
+            await document.documentElement.requestFullscreen();
+            btnFull.setAttribute('aria-pressed', 'true');
+          } else {
+            await document.exitFullscreen();
+            btnFull.setAttribute('aria-pressed', 'false');
+          }
+        } catch (_) {
+          btnFull.setAttribute('aria-pressed', 'true');
+        }
+        closeHud();
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && wakeLock === null) {
+          requestWakeLock();
+        }
+      });
+
+      // Atajos de teclado por si se prueba desde PC
+      document.addEventListener('keydown', (e) => {
+        const map = { '1': 'calm', '2': 'listen', '3': 'empathy', '4': 'happy', '5': 'tired', '6': 'breath', '7': 'group' };
+        if (map[e.key]) {
+          stopAutoDemo();
+          setState(map[e.key]);
+        } else if (e.key === 'h' || e.key === 'H') {
+          if (els.hudDock.classList.contains('open')) closeHud();
+          else openHud();
+        } else if (e.key === 'f' || e.key === 'F') {
+          btnFull.click();
+        }
+      });
+
+      // Inicio
+      setState('calm', { keepHud: true });
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>
