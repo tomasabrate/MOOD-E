@@ -450,12 +450,16 @@
     <div class="face-wrap" id="face-wrap" role="button" tabindex="0" aria-label="Rostro de MOOD-E. Tocá para interactuar.">
       <svg class="face-svg" id="face-svg" viewBox="0 0 320 210" aria-hidden="true">
         <defs>
-          <clipPath id="clip-left">
-            <rect id="clip-rect-l" x="58" y="45" width="76" height="114" rx="38"></rect>
-          </clipPath>
-          <clipPath id="clip-right">
-            <rect id="clip-rect-r" x="186" y="45" width="76" height="114" rx="38"></rect>
-          </clipPath>
+          <mask id="mask-left" maskUnits="userSpaceOnUse" x="-80" y="-100" width="160" height="200">
+            <rect id="clip-rect-l" x="-38" y="-51" width="76" height="102" rx="38" fill="#ffffff"></rect>
+            <path id="lid-top-l" d="M-50 -70 L50 -70 L50 -68 L-50 -68 Z" fill="#000000"></path>
+            <path id="lid-bot-l" d="M-50 70 L50 70 L50 68 L-50 68 Z" fill="#000000"></path>
+          </mask>
+          <mask id="mask-right" maskUnits="userSpaceOnUse" x="-80" y="-100" width="160" height="200">
+            <rect id="clip-rect-r" x="-38" y="-51" width="76" height="102" rx="38" fill="#ffffff"></rect>
+            <path id="lid-top-r" d="M-50 -70 L50 -70 L50 -68 L-50 -68 Z" fill="#000000"></path>
+            <path id="lid-bot-r" d="M-50 70 L50 70 L50 68 L-50 68 Z" fill="#000000"></path>
+          </mask>
           <filter id="cheek-blur" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="6"></feGaussianBlur>
           </filter>
@@ -468,23 +472,18 @@
 
           <!-- OJO IZQUIERDO -->
           <g id="eye-l-group" transform="translate(96 102)">
-            <g id="eye-l-scale" transform="scale(1 1)" clip-path="url(#clip-left)">
+            <g id="eye-l-scale" transform="scale(1 1)" mask="url(#mask-left)">
               <rect id="eye-l-base" x="-38" y="-51" width="76" height="102" rx="38" fill="#38D9C8"></rect>
               <!-- Brillo superior OLED sutil -->
               <ellipse id="eye-l-sheen" cx="-10" cy="-22" rx="10" ry="15" fill="#FFFFFF" opacity="0.22" transform="rotate(-14 -10 -22)"></ellipse>
-              <!-- Parpados negros simetricos para parpadeo, descanso, empatia y sonrisa -->
-              <path id="lid-top-l" d="M-50 -70 L50 -70 L50 -68 L-50 -68 Z" fill="#000000"></path>
-              <path id="lid-bot-l" d="M-50 70 L50 70 L50 68 L-50 68 Z" fill="#000000"></path>
             </g>
           </g>
 
           <!-- OJO DERECHO -->
           <g id="eye-r-group" transform="translate(224 102)">
-            <g id="eye-r-scale" transform="scale(1 1)" clip-path="url(#clip-right)">
+            <g id="eye-r-scale" transform="scale(1 1)" mask="url(#mask-right)">
               <rect id="eye-r-base" x="-38" y="-51" width="76" height="102" rx="38" fill="#38D9C8"></rect>
               <ellipse id="eye-r-sheen" cx="-10" cy="-22" rx="10" ry="15" fill="#FFFFFF" opacity="0.22" transform="rotate(-14 -10 -22)"></ellipse>
-              <path id="lid-top-r" d="M-50 -70 L50 -70 L50 -68 L-50 -68 Z" fill="#000000"></path>
-              <path id="lid-bot-r" d="M-50 70 L50 70 L50 68 L-50 68 Z" fill="#000000"></path>
             </g>
           </g>
         </g>
