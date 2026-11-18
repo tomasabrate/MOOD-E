@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Logo circular MOOD-E">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="38%" r="65%">
+      <stop offset="0%" stop-color="#171D24"/>
+      <stop offset="100%" stop-color="#07090C"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Medallon circular negro mate para tapa superior de maqueta -->
+  <circle cx="256" cy="256" r="248" fill="url(#bgGrad)"/>
+  <circle cx="256" cy="256" r="236" fill="none" stroke="#38D9C8" stroke-width="3" opacity="0.65"/>
+  <circle cx="256" cy="256" r="224" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1.5"/>
+
+  <!-- Solo texto centrado estilo WALL-E: MOOD · [E] -->
+  <g transform="translate(256 256) scale(1.12) translate(-256 -264)">
+    <!-- M -->
+    <path d="M 83 290 V 238 L 107 268 L 131 238 V 290" fill="none" stroke="#F4F8F8" stroke-width="12.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- O -->
+    <rect x="152" y="238" width="42" height="52" rx="20" fill="none" stroke="#F4F8F8" stroke-width="12.5"/>
+    <!-- O -->
+    <rect x="214" y="238" width="42" height="52" rx="20" fill="none" stroke="#F4F8F8" stroke-width="12.5"/>
+    <!-- D -->
+    <path d="M 277 238 H 295 A 24 26 0 0 1 295 290 H 277 Z" fill="none" stroke="#F4F8F8" stroke-width="12.5" stroke-linejoin="round"/>
+    <!-- Punto separador -->
+    <circle cx="340" cy="264" r="5" fill="#9BB4B6"/>
+    <!-- Insignia circular protagonista con E -->
+    <circle cx="393" cy="264" r="42" fill="#38D9C8"/>
+    <path d="M 408 242 H 378 V 286 H 408 M 378 264 H 403" fill="none" stroke="#07090C" stroke-width="10.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

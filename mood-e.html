@@ -83,10 +83,38 @@ header.top {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px 18px;
-  min-height: 58px;
+  gap: 14px 24px;
+  min-height: 62px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 65%, transparent);
 }
-.brand { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.brand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+  min-width: 0;
+}
+.brand-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+}
+.wordmark {
+  display: block;
+  width: auto;
+  height: 50px;
+  color: var(--fg);
+}
+.brand-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 16px;
+  border-left: 2px solid var(--line);
+}
+.brand-meta .course { font-size: 13.5px; font-weight: 700; color: var(--fg); letter-spacing: .01em; }
 .top-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .tabs { display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
 .tabs button, .tabs a {
@@ -190,9 +218,14 @@ label { font-size: 14px; font-weight: 500; }
 .bubble.quiet { color: var(--muted); }
 
 /* ---------- Pestaña 1: Presentación (tipografia amplia, ocupa bien el ancho) ---------- */
-.pres-grid { display: flex; flex-direction: column; gap: 16px; }
-.hero-pres { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px; align-items: stretch; }
+.pres-grid { display: flex; flex-direction: column; gap: 14px; }
+.sec-div { display: flex; align-items: center; gap: 12px; margin-top: 2px; }
+.sec-div span { font: 800 13px var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
+.sec-div::after { content: ""; flex: 1 1 auto; height: 1px; background: var(--line); }
+.hero-pres { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.95fr); gap: 16px; align-items: stretch; }
 .hero-pres .card { display: flex; flex-direction: column; justify-content: center; padding: 22px; }
+.hero-about { display: flex; align-items: center; gap: 20px; }
+.hero-logo { width: 132px; height: 132px; border-radius: 50%; flex: none; box-shadow: 0 10px 26px var(--shadow); }
 .lead { font-size: 17.5px; line-height: 1.58; margin-top: 10px; }
 .team-grid {
   display: grid;
@@ -236,44 +269,50 @@ label { font-size: 14px; font-weight: 500; }
 .pillar h3 { font-size: 19px; }
 .pillar p { font-size: 16px; line-height: 1.52; }
 
-.exp-box { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.35fr); gap: 20px; align-items: center; }
-.dims-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+.justif-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
 .dim-card { background: var(--bg); border: 1px solid var(--line); border-radius: 13px; padding: 14px 16px; }
-.dim-card h3 { font-size: 16px; margin-bottom: 4px; }
-.dim-card p { font-size: 15px; color: var(--muted); }
+.dim-card h3 { font-size: 16px; margin-bottom: 5px; }
+.dim-card p { font-size: 15px; line-height: 1.48; color: var(--muted); }
+.cierre-card {
+  padding: 22px 26px;
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--line));
+}
+.cierre-card .softskill-sub p { font-size: 15.5px; line-height: 1.5; color: var(--muted); }
 .pres-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
 
-/* ---------- Pestaña 2: Modo individual (ambas columnas estiradas a pantalla completa) ---------- */
+/* ---------- Pestaña 2: Modo individual (2 tarjetas a la izquierda + 2 tarjetas a la derecha) ---------- */
 .ind {
   flex: 1 1 auto;
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr);
-  gap: 18px;
+  gap: 16px;
   align-items: stretch;
 }
+.ind-left { display: flex; flex-direction: column; gap: 14px; min-width: 0; height: 100%; }
 .stage {
-  background: var(--stage); border-radius: 20px; padding: 20px 24px 18px;
-  display: flex; flex-direction: column; gap: 14px; align-items: center; justify-content: space-between;
-  min-width: 0; height: 100%;
+  flex: 1 1 auto;
+  background: var(--stage); border-radius: 20px; padding: 18px 22px;
+  display: flex; flex-direction: column; gap: 12px; align-items: center; justify-content: center;
+  min-width: 0;
 }
 .stage-center {
-  flex: 1 1 auto;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 12px;
 }
-.stage .robot { max-width: min(300px, 34dvh); }
-.stage .bubble { width: 100%; background: var(--surface); font-size: 15.5px; min-height: 4.2em; }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13.5px; color: var(--muted); justify-content: center; }
-.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+.stage .robot { max-width: min(260px, 28dvh); }
+.stage .bubble { width: 100%; background: var(--surface); font-size: 15.5px; min-height: 3.9em; }
+.stage-exps { gap: 7px; margin-top: 12px; }
+.stage-exps .chip { font-size: 13px; padding: 6px 11px; min-height: 32px; }
 .panel { display: flex; flex-direction: column; gap: 14px; min-width: 0; height: 100%; }
 .panel .card { display: flex; flex-direction: column; justify-content: center; }
-.panel .card:first-child { flex: 1 1 0; }
-.panel .card:last-child { flex: 1.1 1 0; }
-.signals { display: flex; flex-direction: column; gap: 14px; }
+.panel .card:first-child { flex: 0.95 1 0; }
+.panel .card:last-child { flex: 1.15 1 0; gap: 10px; }
+.signals { display: flex; flex-direction: column; gap: 13px; }
 .sig { display: flex; flex-direction: column; gap: 5px; }
 .sig .top { display: flex; justify-content: space-between; gap: 12px; }
 .sig output { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -284,30 +323,27 @@ label { font-size: 14px; font-weight: 500; }
   background: color-mix(in srgb, var(--pc, var(--calm)) 20%, var(--surface)); border: 1px solid color-mix(in srgb, var(--pc, var(--calm)) 55%, var(--surface));
 }
 .pill i { width: 10px; height: 10px; border-radius: 50%; background: var(--pc, var(--calm)); }
+.sub-block { display: flex; flex-direction: column; gap: 6px; }
+.sub-lbl { font-size: 13px; font-weight: 700; color: var(--muted); }
 .actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.say { display: flex; gap: 8px; }
-.say .btn { flex: none; }
-.steps-box {
-  margin-top: 10px; padding: 11px 14px; border-radius: 12px;
-  background: var(--bg); border: 1px dashed var(--line); font-size: 14.5px;
-  display: flex; flex-direction: column; gap: 5px;
+.explain-box {
+  padding: 12px 14px; border-radius: 12px;
+  background: var(--bg); border: 1px solid var(--line); font-size: 14.5px; line-height: 1.48;
+  display: flex; flex-direction: column; gap: 4px;
 }
-.steps-box ol { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; }
+.explain-box strong { font-size: 14.5px; color: var(--fg); }
+.explain-box p { color: var(--muted); }
 
-/* ---------- Pestaña 3: Modo grupal alineado a pantalla completa (3x2 izquierda + insights derecha) ---------- */
+/* ---------- Pestaña 3: Modo grupal (2 tarjetas arriba + 3x2 izquierda + insights derecha) ---------- */
 .grp-wrap { flex: 1 1 auto; display: flex; flex-direction: column; gap: 12px; }
-.grp-bar { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
-.toolbar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
-.toolbar .grow { flex: 1 1 auto; }
+.grp-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); gap: 12px; align-items: stretch; }
+.grp-top .card { padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; }
 .net-pill {
   display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px; border-radius: 999px;
   font-size: 13px; font-weight: 600; background: var(--bg); border: 1px solid var(--line);
 }
 .net-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--calm); box-shadow: 0 0 8px var(--calm); }
-.net-pill.off .dot { background: var(--idle); box-shadow: none; }
-.clock { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 14.5px; color: var(--muted); }
-.switch { display: inline-flex; align-items: center; gap: 7px; font-size: 14.5px; font-weight: 600; cursor: pointer; min-height: 36px; }
-.switch input { width: 17px; height: 17px; accent-color: var(--accent); }
 .presets { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
 
 .grp-board {
@@ -375,37 +411,89 @@ details.idea .f { display: flex; flex-direction: column; gap: 6px; padding-top: 
 .stats { margin-top: 8px; font-size: 14px; color: var(--muted); }
 .hint { font-size: 13.5px; color: var(--muted); }
 
+/* ---------- Pestaña 4: Conclusión (Salvapantallas grande + Reflexión grupal) ---------- */
+.end-grid {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+.end-saver {
+  background: #040608;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  box-shadow: 0 18px 46px var(--shadow);
+  --fg: #F4F8F8;
+  --muted: #9BB4B6;
+  min-width: 0;
+}
+.saver-eyes-wrap { flex: 1 1 auto; width: 100%; display: flex; align-items: center; justify-content: center; }
+.saver-face { width: min(88%, 410px); height: auto; display: block; overflow: visible; }
+.saver-wordmark { width: min(68%, 260px); height: auto; display: block; color: #F4F8F8; }
+.end-panel { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.end-cards { flex: 1 1 auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.end-card { display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.end-card h3 { font-size: 16.5px; }
+.end-card p { font-size: 15.5px; line-height: 1.5; color: var(--muted); }
+
 footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding-top: 2px; }
 
 @media (max-width: 1120px) {
-  .grp-board { grid-template-columns: minmax(0, 1fr); }
+  .grp-board, .grp-top { grid-template-columns: minmax(0, 1fr); }
   .table { grid-template-rows: auto; height: auto; }
   .insight-col { height: auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 }
 @media (max-width: 860px) {
-  .hero-pres, .ind, .pillars, .exp-box, .dims-grid, .softskill-cols, .insight-col { grid-template-columns: minmax(0, 1fr); }
+  .hero-pres, .ind, .end-grid, .pillars, .justif-grid, .softskill-cols, .insight-col { grid-template-columns: minmax(0, 1fr); }
   .table { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .stage, .panel, .panel .card { height: auto; }
-  h1 { font-size: 26px; }
+  .ind-left, .stage, .panel, .panel .card { height: auto; }
+  .wordmark { height: 42px; }
 }
 @media (max-width: 560px) {
-  .table, .team-grid { grid-template-columns: minmax(0, 1fr); }
+  .table, .team-grid, .end-cards { grid-template-columns: minmax(0, 1fr); }
+  .hero-about { flex-direction: column; align-items: flex-start; }
+  .brand-meta { padding-left: 0; border-left: 0; }
 }
   </style>
 </head>
 <body>
 
+<svg width="0" height="0" aria-hidden="true" style="position:absolute;overflow:hidden;pointer-events:none">
+  <symbol id="wm-mood-e" viewBox="70 216 374 96">
+    <path d="M 83 290 V 238 L 107 268 L 131 238 V 290" fill="none" stroke="currentColor" stroke-width="12.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="152" y="238" width="42" height="52" rx="20" fill="none" stroke="currentColor" stroke-width="12.5"/>
+    <rect x="214" y="238" width="42" height="52" rx="20" fill="none" stroke="currentColor" stroke-width="12.5"/>
+    <path d="M 277 238 H 295 A 24 26 0 0 1 295 290 H 277 Z" fill="none" stroke="currentColor" stroke-width="12.5" stroke-linejoin="round"/>
+    <circle cx="340" cy="264" r="5" fill="currentColor" opacity="0.58"/>
+    <circle cx="393" cy="264" r="42" fill="#38D9C8"/>
+    <path d="M 408 242 H 378 V 286 H 408 M 378 264 H 403" fill="none" stroke="#07090C" stroke-width="10.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+</svg>
+
 <div class="wrap">
   <header class="top">
     <div class="brand">
-      <span class="eyebrow">UTN FRC · Ingeniería en Sistemas de Información · 5K1 · Habilidades Blandas</span>
-      <h1>MOOD-E</h1>
+      <h1 class="brand-title">
+        <svg class="wordmark" viewBox="0 0 374 96" role="img" aria-label="MOOD-E"><use href="#wm-mood-e" x="0" y="0" width="374" height="96"/></svg>
+      </h1>
+      <div class="brand-meta">
+        <span class="course">UTN FRC · Ingeniería en Sistemas de Información · 5K1</span>
+        <span class="eyebrow">TP Integrador · Habilidades Blandas · Año 2026</span>
+      </div>
     </div>
     <div class="top-controls">
       <nav class="tabs" role="tablist" aria-label="Vistas de MOOD-E">
         <button role="tab" id="tab-con" aria-selected="true" aria-controls="view-con">Presentación</button>
         <button role="tab" id="tab-ind" aria-selected="false" aria-controls="view-ind">Modo individual</button>
         <button role="tab" id="tab-grp" aria-selected="false" aria-controls="view-grp">Modo grupal</button>
+        <button role="tab" id="tab-end" aria-selected="false" aria-controls="view-end">Conclusión</button>
         <a href="./index.html" title="Abrir pantalla facial para el celular de la maqueta">
           <svg class="ico" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
           <span>Celular</span>
@@ -424,15 +512,21 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
   <!-- ===== 1. Presentación (Pestaña inicial) ===== -->
   <section id="view-con" role="tabpanel" aria-labelledby="tab-con">
     <div class="pres-grid">
-      <!-- Fila 1: Proyecto MOOD-E + Integrantes del equipo -->
+      <div class="sec-div"><span>1 · Proyecto MOOD-E y equipo 5K1</span></div>
+      <!-- Fila 1: Proyecto MOOD-E (con logo) + Integrantes del equipo -->
       <div class="hero-pres">
         <div class="card">
-          <span class="eyebrow">Trabajo Práctico Integrador · Robots con Habilidades Humanas</span>
-          <h2 style="margin-top:6px;font-size:24px">Qué es MOOD-E</h2>
-          <p class="lead muted">
-            <strong>MOOD-E</strong> es un robot inteligente de escritorio pensado para acompañar a estudiantes y trabajadores durante su jornada, tanto cuando trabajan solos como en equipo.
-            Elegimos un acompañante físico visible —y no otra app en pantalla— para transmitir cercanía, conversar de forma natural y poner en práctica la <strong>escucha activa</strong>.
-          </p>
+          <div class="hero-about">
+            <img class="hero-logo" src="./logo-mood-e.svg" alt="Logo circular de MOOD-E">
+            <div>
+              <span class="eyebrow">Trabajo Práctico Integrador · Robots con Habilidades Humanas</span>
+              <h2 style="margin-top:6px;font-size:24px">Qué es MOOD-E</h2>
+              <p class="lead muted">
+                <strong>MOOD-E</strong> es un robot inteligente de escritorio pensado para acompañar a estudiantes y trabajadores durante su jornada, tanto cuando trabajan solos como en equipo.
+                Elegimos un acompañante físico visible —y no otra app en pantalla— para transmitir cercanía, conversar de forma natural y poner en práctica la <strong>escucha activa</strong>.
+              </p>
+            </div>
+          </div>
         </div>
 
         <div class="card">
@@ -449,6 +543,7 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
         </div>
       </div>
 
+      <div class="sec-div"><span>2 · Habilidad blanda elegida: Empatía y Escucha Activa</span></div>
       <!-- Fila 2 central destacada: La habilidad blanda elegida -->
       <div class="card softskill-center">
         <span class="eyebrow">Habilidad blanda elegida</span>
@@ -481,6 +576,7 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
         </div>
       </div>
 
+      <div class="sec-div"><span>3 · Los 3 planos de la empatía y coherencia del diseño</span></div>
       <!-- Fila 3: Los 3 planos de la empatía -->
       <div class="pillars">
         <article class="card pillar">
@@ -500,41 +596,22 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
         </article>
       </div>
 
-      <!-- Fila 4: Expresiones + Dimensión individual/grupal + Privacidad -->
+      <!-- Fila 4: Coherencia diseño–habilidad (Justificación del prototipo) -->
       <div class="card">
-        <div class="exp-box">
-          <div class="stage">
-            <div class="stage-center">
-              <div id="con-robot" style="width:100%;max-width:225px"></div>
-              <p class="bubble" id="con-bubble" style="width:100%"></p>
-            </div>
+        <span class="eyebrow">Coherencia diseño–habilidad · Justificación del prototipo</span>
+        <h2 style="margin-top:4px;font-size:22px">Por qué cada decisión de diseño responde a la empatía</h2>
+        <div class="justif-grid">
+          <div class="dim-card">
+            <h3>Presencia física vs. app</h3>
+            <p>Una notificación en pantalla compite por atención y suma estrés. Un acompañante visible en el escritorio genera cercanía sin invadir la tarea.</p>
           </div>
-          <div>
-            <span class="eyebrow">Expresiones faciales y funcionamiento</span>
-            <h2 style="margin-top:4px;font-size:22px">Cómo expresa y media MOOD-E</h2>
-            <div class="chips" id="con-states" style="margin-top:12px">
-              <button class="chip" data-cexp="calm" aria-pressed="true">Calma</button>
-              <button class="chip" data-cexp="listen">Escucha activa</button>
-              <button class="chip" data-cexp="empathy">Empatía</button>
-              <button class="chip" data-cexp="happy">Alegría</button>
-              <button class="chip" data-cexp="tired">Cansancio / Pausa</button>
-              <button class="chip" data-cexp="breath">Respirar 4-6</button>
-              <button class="chip" data-cexp="group">Mediación grupal</button>
-            </div>
-            <div class="dims-grid">
-              <div class="dim-card">
-                <h3>Red grupal y personalización</h3>
-                <p>Cada integrante tiene su MOOD-E (en el color que prefiera) conectado por Wi-Fi para detectar quién quedó afuera o si hay tensión e interrupciones.</p>
-              </div>
-              <div class="dim-card">
-                <h3>Privacidad y reflexión</h3>
-                <p>Representa una empatía simulada que acompaña sin reemplazar el vínculo humano. Lo privado nunca se comparte; al grupo solo llega el clima e ideas autorizadas.</p>
-              </div>
-            </div>
-            <div class="pres-actions">
-              <button class="btn primary" id="go-ind" type="button">Ir a Modo individual →</button>
-              <button class="btn" id="go-grp" type="button">Ir a Modo grupal →</button>
-            </div>
+          <div class="dim-card">
+            <h3>Acompañante compacto y color elegido</h3>
+            <p>Diseñado como un compañero de escritorio que ocupa poco lugar, con formas suaves y color de carcasa personalizado a elección de cada persona.</p>
+          </div>
+          <div class="dim-card">
+            <h3>Micrófonos, USB-C y red Wi-Fi</h3>
+            <p>Percibe tono de voz, pausas y ritmo de tecleo en lo individual; en equipo, conecta los MOOD-E por Wi-Fi para incluir todas las voces.</p>
           </div>
         </div>
       </div>
@@ -544,16 +621,25 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
   <!-- ===== 2. Modo Individual ===== -->
   <section id="view-ind" role="tabpanel" aria-labelledby="tab-ind" hidden>
     <div class="ind">
-      <div class="stage">
-        <div class="stage-center">
-          <div id="ind-robot" style="width:100%;display:flex;justify-content:center"></div>
-          <p class="bubble" id="ind-bubble" aria-live="polite"></p>
+      <div class="ind-left">
+        <div class="card">
+          <span class="eyebrow">Modo individual · Acompañante personal</span>
+          <p class="muted" style="font-size:14.5px;margin-top:6px">Cuando trabajás solo, percibe señales de estrés o cansancio, valida sin juzgar, divide el bloqueo en pasos chicos y guía pausas de respiración.</p>
+          <div class="chips stage-exps" id="ind-states" aria-label="Expresiones faciales de MOOD-E">
+            <button class="chip" type="button" data-cexp="calm" aria-pressed="false">Calma</button>
+            <button class="chip" type="button" data-cexp="listen" aria-pressed="false">Escucha activa</button>
+            <button class="chip" type="button" data-cexp="empathy" aria-pressed="false">Empatía</button>
+            <button class="chip" type="button" data-cexp="happy" aria-pressed="false">Alegría</button>
+            <button class="chip" type="button" data-cexp="tired" aria-pressed="false">Pausa</button>
+            <button class="chip" type="button" data-cexp="breath" aria-pressed="false">Respirar 4-6</button>
+          </div>
         </div>
-        <div class="legend" aria-label="Significado del color en pantalla">
-          <span><i style="background:var(--calm)"></i>Calma</span>
-          <span><i style="background:var(--amber)"></i>Atención / Pausa</span>
-          <span><i style="background:var(--empathy)"></i>Empatía</span>
-          <span><i style="background:var(--warm)"></i>Contención</span>
+
+        <div class="stage">
+          <div class="stage-center">
+            <div id="ind-robot" style="width:100%;display:flex;justify-content:center"></div>
+            <p class="bubble" id="ind-bubble" aria-live="polite"></p>
+          </div>
         </div>
       </div>
 
@@ -563,11 +649,11 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
           <div class="signals" style="margin-top:12px">
             <div class="sig">
               <div class="top"><label for="s-typing">Ritmo de tecleo (vía USB-C)</label><output id="o-typing" for="s-typing"></output></div>
-              <input type="range" id="s-typing" min="0" max="100" value="20">
+              <input type="range" id="s-typing" min="0" max="100" value="15">
             </div>
             <div class="sig">
               <div class="top"><label for="s-voice">Tono de voz y suspiros (micrófonos)</label><output id="o-voice" for="s-voice"></output></div>
-              <input type="range" id="s-voice" min="0" max="100" value="15">
+              <input type="range" id="s-voice" min="0" max="100" value="10">
             </div>
             <div class="sig">
               <div class="top"><label for="s-mins">Tiempo sin pausa</label><output id="o-mins" for="s-mins"></output></div>
@@ -575,59 +661,63 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
             </div>
           </div>
           <div class="chips" style="margin-top:14px">
-            <button class="chip" data-sc="focus">Concentrado</button>
-            <button class="chip" data-sc="frus">Frustrado</button>
-            <button class="chip" data-sc="tired">Cansado</button>
+            <button class="chip" data-sc="focus" aria-pressed="true">Concentrado</button>
+            <button class="chip" data-sc="frus" aria-pressed="false">Frustrado</button>
+            <button class="chip" data-sc="tired" aria-pressed="false">Cansado</button>
           </div>
         </div>
 
         <div class="card">
-          <div class="eyebrow">2 y 3 · Escucha, valida y ayuda a avanzar</div>
-          <div class="read" style="margin-top:12px">
+          <div class="eyebrow">2 y 3 · Escucha, valida y acompaña</div>
+          <div class="read">
             <span class="pill" id="ind-pill"><i></i><span id="ind-pill-t">Calma</span></span>
             <span class="muted" id="ind-pill-d" style="font-size:14.5px"></span>
           </div>
-          <div class="actions" style="margin-top:14px">
-            <button class="btn primary" id="btn-breath">Respirar juntos</button>
-            <button class="btn" id="btn-pause">Hacer una pausa</button>
-            <button class="btn" id="btn-steps">Dividir en pasos chicos</button>
+          <div class="sub-block">
+            <span class="sub-lbl">1 · Qué le dice el usuario (ejemplos rápidos)</span>
+            <div class="chips" aria-label="Ejemplos rápidos de conversación">
+              <button class="chip" type="button" data-say="No llego con la entrega del viernes" aria-pressed="false">«No llego con la entrega»</button>
+              <button class="chip" type="button" data-say="Me trabé hace dos horas con este error de código" aria-pressed="false">«Me trabé con el código»</button>
+              <button class="chip" type="button" data-say="Me cuesta encontrar hueco para hablar en la daily" aria-pressed="false">«Me cuesta hablar en la daily»</button>
+            </div>
           </div>
-          <div class="steps-box" id="steps-box" hidden>
-            <strong>Plan anti-agobio en 3 pasos manejables:</strong>
-            <ol>
-              <li>Elegí <b>una sola micro-tarea</b> que puedas empezar en 5 minutos.</li>
-              <li>Dejá el resto en pausa; solo importa destrabar el primer bloque.</li>
-              <li>Cuando lo termines, frená un segundo a respirar y decidí el siguiente paso.</li>
-            </ol>
+          <div class="sub-block">
+            <span class="sub-lbl">2 · Intervención compasiva de MOOD-E</span>
+            <div class="actions">
+              <button class="btn primary" id="btn-breath" type="button">Respirar juntos (4-6)</button>
+              <button class="btn" id="btn-pause" type="button">Sugerir una pausa</button>
+              <button class="btn" id="btn-steps" type="button" aria-pressed="false">Dividir en pasos chicos</button>
+            </div>
           </div>
-          <form class="say" id="say-form" style="margin-top:14px" autocomplete="off">
-            <input type="text" id="say-in" maxlength="120" placeholder="Contale qué te traba" aria-label="Contale a MOOD-E qué te traba">
-            <button class="btn" type="submit">Enviar</button>
-          </form>
+          <div class="explain-box" id="ind-explain" aria-live="polite">
+            <strong id="ind-exp-t">Respuesta de MOOD-E</strong>
+            <p id="ind-exp-d"></p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== 3. Modo Grupal (6 integrantes en 3x2 a la izquierda + Clima y Tiempo a la derecha) ===== -->
+  <!-- ===== 3. Modo Grupal (2 tarjetas arriba + 3x2 a la izquierda + Clima y Tiempo a la derecha) ===== -->
   <section id="view-grp" role="tabpanel" aria-labelledby="tab-grp" hidden>
     <div class="grp-wrap">
-      <div class="card grp-bar">
-        <div class="toolbar">
-          <button class="btn primary" id="g-run">Iniciar reunión</button>
-          <button class="btn" id="g-reset">Reiniciar</button>
-          <label class="switch"><input type="checkbox" id="g-sync" checked> Sincronizar MOOD-E</label>
-          <span class="net-pill" id="g-net"><span class="dot"></span><span id="g-net-txt">Red Wi-Fi activa</span></span>
-          <span class="grow"></span>
-          <span class="clock" id="g-clock">Tiempo simulado 00:00</span>
+      <div class="grp-top">
+        <div class="card">
+          <span class="eyebrow">Modo grupal · Red de 6 MOOD-E</span>
+          <p class="muted" style="font-size:14.5px">Los dispositivos se conectan entre sí en reuniones para cuidar turnos de palabra, avisar si alguien queda en silencio y frenar interrupciones manteniendo la privacidad individual.</p>
         </div>
-        <div class="presets">
-          <span class="eyebrow">Escenarios</span>
-          <button class="chip" data-pre="equilibrada">Reunión equilibrada</button>
-          <button class="chip" data-pre="silencio">Alguien en silencio</button>
-          <button class="chip" data-pre="acapara">Alguien acapara</button>
-          <button class="chip" data-pre="tension">Discusión tensa</button>
-          <span class="hint" style="margin-left:auto">Tocá «Hablar» para tomar la palabra; cambiar mientras otro habla cuenta como interrupción.</span>
+        <div class="card">
+          <div class="toolbar">
+            <span class="eyebrow">Escenarios predefinidos</span>
+            <span class="net-pill"><span class="dot"></span><span>Red Wi-Fi activa</span></span>
+          </div>
+          <div class="presets">
+            <button class="chip" data-pre="equilibrada" aria-pressed="false">Reunión equilibrada</button>
+            <button class="chip" data-pre="silencio" aria-pressed="true">Alguien en silencio</button>
+            <button class="chip" data-pre="acapara" aria-pressed="false">Alguien acapara</button>
+            <button class="chip" data-pre="tension" aria-pressed="false">Discusión tensa</button>
+          </div>
+          <span class="hint">Tocá «Hablar» en un integrante para probar un turno o interrupción.</span>
         </div>
       </div>
 
@@ -644,8 +734,7 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
               </div>
             </div>
             <div>
-              <p class="stats">Interrupciones últimos 45 s: <b id="g-intr">0</b></p>
-              <p class="stats">Carcasas personalizables por integrante; lo privado no sale del robot, solo clima e ideas compartidas.</p>
+              <p class="stats">Interrupciones últimos 45 s: <b id="g-intr">0</b> · Cada carcasa se personaliza; lo privado nunca sale del robot.</p>
             </div>
           </div>
 
@@ -658,9 +747,52 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
     </div>
   </section>
 
+  <!-- ===== 4. Conclusión y Salvapantallas ===== -->
+  <section id="view-end" role="tabpanel" aria-labelledby="tab-end" hidden>
+    <div class="end-grid">
+      <div class="end-saver" aria-label="Salvapantallas visual de MOOD-E">
+        <div class="saver-eyes-wrap" id="saver-face-host"></div>
+        <svg class="saver-wordmark" viewBox="0 0 374 96" role="img" aria-label="MOOD-E"><use href="#wm-mood-e" x="0" y="0" width="374" height="96"/></svg>
+      </div>
+
+      <div class="end-panel">
+        <div class="card cierre-card">
+          <span class="eyebrow">Conclusión · Reflexión grupal</span>
+          <h2 style="margin-top:6px;font-size:25px">La empatía como puente entre tecnología y personas</h2>
+          <p class="lead muted" style="font-size:17px">
+            <strong>MOOD-E</strong> no siente emociones reales ni reemplaza el vínculo humano: funciona como un recordatorio cercano para frenar, escuchar sin interrumpir y cuidar que todas las voces tengan lugar.
+          </p>
+        </div>
+
+        <div class="end-cards">
+          <div class="card end-card">
+            <h3>Empatía simulada vs. vínculo real</h3>
+            <p>El robot entrena hábitos concretos —validar antes de aconsejar, leer pausas y dar turnos—, mientras la conexión auténtica siempre ocurre entre personas.</p>
+          </div>
+          <div class="card end-card">
+            <h3>Privacidad por diseño</h3>
+            <p>Todo desahogo individual permanece en el dispositivo de cada integrante; a la red grupal solo llega el clima del equipo e ideas compartidas.</p>
+          </div>
+          <div class="card end-card">
+            <h3>Impacto en Sistemas</h3>
+            <p>En <em>dailies</em>, trabajos prácticos y épocas de entregas, la escucha activa reduce malentendidos, evita bloqueos solitarios y fortalece el clima del equipo.</p>
+          </div>
+          <div class="card end-card">
+            <h3>Aprendizaje del equipo 5K1</h3>
+            <p>Construir MOOD-E entre los seis integrantes nos exigió practicar esa misma habilidad: coordinar roles, equilibrar tiempos y respetar todas las miradas.</p>
+          </div>
+        </div>
+
+        <div class="pres-actions" style="margin-top:0">
+          <button class="btn" id="go-con-top" type="button">← Volver a Presentación</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <footer>
     <span>Trabajo Práctico Integrador «Robots con Habilidades Humanas» · UTN FRC 2026</span>
-    <span>Atajos de exposición: teclas 1 (Presentación), 2 (Individual), 3 (Grupal)</span>
+    <span>Atajos de exposición: teclas 1 (Presentación), 2 (Individual), 3 (Grupal), 4 (Conclusión)</span>
   </footer>
 </div>
 
@@ -710,17 +842,25 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
     '</g>';
   }
 
+  function waveMarkup(cy) {
+    var out = '', heights = [4, 7, 11, 14, 11, 7, 4];
+    for (var w = 0; w < 7; w++) {
+      var wx = 84 + w * 5, wh = heights[w];
+      out += '<rect class="wave-bar" x="' + wx + '" y="' + (cy - wh / 2) + '" width="2.6" height="' + wh + '" rx="1.3" style="transform-origin:' + (wx + 1.3) + 'px ' + cy + 'px"/>';
+    }
+    return out;
+  }
+
+  function saverFaceSVG() {
+    return '<svg class="robot saver-face s-open ring-calm" viewBox="64 92 72 44" role="img" aria-label="Ojos de MOOD-E">' +
+      eyeMarkup(85, 1) + eyeMarkup(115, -1) +
+      '</svg>';
+  }
+
   function robotSVG(label, skinIdx) {
     var id = 'rb' + (++uid);
     var sk = SKINS[(skinIdx || 0) % SKINS.length];
     var body = 'M36 220 C35 204 45 126 55 64 L54 58 L69 30 C82 26 118 26 131 30 L146 58 L145 64 C155 126 165 204 164 220 C162 232 138 237 100 237 C62 237 38 232 36 220 Z';
-    var wave = '';
-    var heights = [4, 7, 11, 14, 11, 7, 4];
-    for (var w = 0; w < 7; w++) {
-      var wx = 84 + w * 5;
-      var wh = heights[w];
-      wave += '<rect class="wave-bar" x="' + wx + '" y="' + (192 - wh / 2) + '" width="2.6" height="' + wh + '" rx="1.3" style="transform-origin:' + (wx + 1.3) + 'px 192px"/>';
-    }
     return '<svg class="robot s-open ring-calm" viewBox="0 0 200 250" role="img" aria-label="' + label + '">' +
       '<defs>' +
       '<linearGradient id="' + id + 'g" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="' + sk.a + '"/><stop offset=".45" stop-color="' + sk.a + '"/><stop offset="1" stop-color="' + sk.b + '"/></linearGradient>' +
@@ -737,7 +877,7 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
       '<g clip-path="url(#' + id + 'sc)">' +
       '<ellipse class="screen-glow" cx="100" cy="122" rx="44" ry="52"/>' +
       '<path d="M64 69 L126 69 L88 211 L64 211 Z" fill="#fff" opacity=".04"/>' +
-      wave +
+      waveMarkup(192) +
       '</g>' +
       '<ellipse class="cheek" cx="78" cy="133" rx="5.5" ry="3"/><ellipse class="cheek" cx="122" cy="133" rx="5.5" ry="3"/>' +
       eyeMarkup(85, 1) + eyeMarkup(115, -1) +
@@ -745,7 +885,7 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
   }
 
   function setRobot(svg, o) {
-    var keep = Array.prototype.slice.call(svg.classList).filter(function (c) { return c.indexOf('breath') === 0; });
+    var keep = Array.prototype.slice.call(svg.classList).filter(function (c) { return c.indexOf('breath') === 0 || c === 'saver-face'; });
     var cls = ['robot', 's-' + o.eye, 'ring-' + o.ring];
     if (o.talking) cls.push('talking');
     svg.setAttribute('class', cls.concat(keep).join(' '));
@@ -773,65 +913,54 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
     else document.exitFullscreen().catch(function () {});
   });
 
-  var tabCon = $('#tab-con'), tabInd = $('#tab-ind'), tabGrp = $('#tab-grp');
+  var tabCon = $('#tab-con'), tabInd = $('#tab-ind'), tabGrp = $('#tab-grp'), tabEnd = $('#tab-end');
   function showTab(name) {
-    var target = (name === 'individual' || name === 'grupal') ? name : 'presentacion';
+    var target = (name === 'individual' || name === 'grupal' || name === 'conclusion') ? name : 'presentacion';
     $('#view-con').hidden = target !== 'presentacion';
     $('#view-ind').hidden = target !== 'individual';
     $('#view-grp').hidden = target !== 'grupal';
+    $('#view-end').hidden = target !== 'conclusion';
     tabCon.setAttribute('aria-selected', String(target === 'presentacion'));
     tabInd.setAttribute('aria-selected', String(target === 'individual'));
     tabGrp.setAttribute('aria-selected', String(target === 'grupal'));
+    tabEnd.setAttribute('aria-selected', String(target === 'conclusion'));
   }
-  tabCon.addEventListener('click', function () { location.hash = 'presentacion'; showTab('presentacion'); });
-  tabInd.addEventListener('click', function () { location.hash = 'individual'; showTab('individual'); });
-  tabGrp.addEventListener('click', function () { location.hash = 'grupal'; showTab('grupal'); });
-  $('#go-ind').addEventListener('click', function () { location.hash = 'individual'; showTab('individual'); });
-  $('#go-grp').addEventListener('click', function () { location.hash = 'grupal'; showTab('grupal'); });
+  function goTab(name) {
+    location.hash = name;
+    showTab(name);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+  function setPressed(sel, attr, active) {
+    $$(sel).forEach(function (b) {
+      b.setAttribute('aria-pressed', String(active !== null && b.getAttribute(attr) === active));
+    });
+  }
+
+  tabCon.addEventListener('click', function () { goTab('presentacion'); });
+  tabInd.addEventListener('click', function () { goTab('individual'); });
+  tabGrp.addEventListener('click', function () { goTab('grupal'); });
+  tabEnd.addEventListener('click', function () { goTab('conclusion'); });
+  $('#go-con-top').addEventListener('click', function () { goTab('presentacion'); });
   window.addEventListener('hashchange', function () { showTab(location.hash.replace('#', '')); });
   document.addEventListener('keydown', function (e) {
     if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
-    if (e.key === '1') { location.hash = 'presentacion'; showTab('presentacion'); }
-    else if (e.key === '2') { location.hash = 'individual'; showTab('individual'); }
-    else if (e.key === '3') { location.hash = 'grupal'; showTab('grupal'); }
+    var map = { '1': 'presentacion', '2': 'individual', '3': 'grupal', '4': 'conclusion' };
+    if (map[e.key]) goTab(map[e.key]);
   });
-
-  /* ---------- 1. Pestaña Presentación (Probador de 7 expresiones) ---------- */
-  var cSvgHost = $('#con-robot');
-  cSvgHost.innerHTML = robotSVG('MOOD-E demostración', 0);
-  var cSvg = cSvgHost.firstChild;
-  var CON_EXP = {
-    calm: { eye: 'open', ring: 'calm', talking: false, msg: 'Calma: acompaña el trabajo diario sin distraer ni invadir.' },
-    listen: { eye: 'listen', ring: 'listen', talking: true, msg: 'Escucha activa: presta atención plena al tono y a las palabras del usuario.' },
-    empathy: { eye: 'empathy', ring: 'empathy', talking: false, msg: 'Empatía: valida lo que sentís («parece frustrante») antes de dar consejos.' },
-    happy: { eye: 'happy', ring: 'happy', talking: false, msg: 'Alegría: celebra avances y refuerza la confianza del equipo.' },
-    tired: { eye: 'tired', ring: 'amber', talking: false, msg: 'Pausa: detecta largas jornadas seguidas y sugiere descansar unos minutos.' },
-    breath: { eye: 'calm', ring: 'calm', talking: false, breath: true, msg: 'Respiración guiada: acompaña inhalaciones de 4 s y exhalaciones de 6 s.' },
-    group: { eye: 'listen', ring: 'calm', lx: 2.2, talking: false, msg: 'Mediación grupal: mira a la mesa e invita discretamente a quien quedó en silencio.' }
-  };
-  function paintConExp(k) {
-    var d = CON_EXP[k] || CON_EXP.calm;
-    cSvg.classList.toggle('breath-in', !!d.breath);
-    setRobot(cSvg, d);
-    $('#con-bubble').textContent = d.msg;
-    $$('[data-cexp]').forEach(function (b) {
-      b.setAttribute('aria-pressed', String(b.getAttribute('data-cexp') === k));
-    });
-  }
-  $$('[data-cexp]').forEach(function (b) {
-    b.addEventListener('click', function () { paintConExp(b.getAttribute('data-cexp')); });
-  });
-  paintConExp('calm');
 
   /* ---------- 2. Modo Individual ---------- */
   var iSvgHost = $('#ind-robot');
   iSvgHost.innerHTML = robotSVG('MOOD-E personal', 0);
   var iSvg = iSvgHost.firstChild;
-  var I = { typing: 20, voice: 15, mins: 25, breathing: false, timer: null, last: '' };
+  var I = { typing: 15, voice: 10, mins: 25, breathing: false, timer: null, sayTimer: null, last: '' };
   var sTyping = $('#s-typing'), sVoice = $('#s-voice'), sMins = $('#s-mins');
   var bubble = $('#ind-bubble');
 
   function say(t) { bubble.textContent = t; }
+  function setExplain(title, desc) {
+    $('#ind-exp-t').textContent = title;
+    $('#ind-exp-d').textContent = desc;
+  }
   function typingWord(v) { return v < 35 ? 'Fluido' : v < 65 ? 'Irregular' : 'Errático'; }
   function voiceWord(v) { return v < 35 ? 'Relajado' : v < 65 ? 'Algo tenso' : 'Tenso'; }
   function stateOf() {
@@ -842,11 +971,49 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
     return 'calm';
   }
   var STATES = {
-    calm: { eye: 'happy', ring: 'happy', color: 'var(--happy)', title: 'Calma', desc: 'Ritmo estable. MOOD-E acompaña sin interrumpir.', msg: function () { return 'Todo tranquilo por acá. Sigo escuchando; si algo cambia, te aviso.'; } },
-    tense: { eye: 'listen', ring: 'listen', color: 'var(--listen)', title: 'Tensión leve', desc: 'Se acelera el ritmo. MOOD-E se pone atento.', msg: function () { return 'Te noto un poco acelerado. Estoy acá por si querés frenar un minuto.'; } },
-    frus: { eye: 'empathy', ring: 'empathy', color: 'var(--empathy)', title: 'Empatía / Contención', desc: 'Señales de bloqueo. MOOD-E valida sin juzgar y ofrece ayuda.', msg: function () { return 'Noto que venís hace rato con esto y parece frustrante. ¿Querés contarme qué te traba?'; } },
-    tired: { eye: 'tired', ring: 'amber', color: 'var(--amber)', title: 'Cansancio', desc: 'Mucho tiempo seguido. MOOD-E propone una pausa.', msg: function () { return 'Llevás ' + I.mins + ' minutos sin pausa. ¿Estiramos un par de minutos?'; } }
+    calm: { eye: 'happy', ring: 'happy', color: 'var(--happy)', title: 'Calma', desc: 'Ritmo estable.', expT: 'Acompañamiento silencioso', expD: 'Tecleo fluido y voz relajada: MOOD-E acompaña sin interrumpir tu foco.', msg: function () { return 'Todo tranquilo por acá. Sigo escuchando; si algo cambia, te aviso.'; } },
+    tense: { eye: 'listen', ring: 'listen', color: 'var(--listen)', title: 'Tensión leve', desc: 'Se acelera el ritmo.', expT: 'Alerta temprana sin invadir', expD: 'Nota que sube la exigencia y se pone atento para ofrecer ayuda si querés frenar.', msg: function () { return 'Te noto un poco acelerado. Estoy acá por si querés frenar un minuto.'; } },
+    frus: { eye: 'empathy', ring: 'empathy', color: 'var(--empathy)', title: 'Empatía / Contención', desc: 'Señales de bloqueo.', expT: 'Validación emocional antes de aconsejar', expD: 'Detecta tecleo errático y tono tenso: escucha y valida lo que sentís antes de sugerir cambios.', msg: function () { return 'Noto que venís hace rato con esto y parece frustrante. ¿Querés contarme qué te traba?'; } },
+    tired: { eye: 'tired', ring: 'amber', color: 'var(--amber)', title: 'Cansancio', desc: 'Mucho tiempo seguido.', expT: 'Cuidado ante fatiga', expD: 'Llevás demasiado tiempo sin descansar: te invita a parar un par de minutos.', msg: function () { return 'Llevás ' + I.mins + ' minutos sin pausa. ¿Estiramos un par de minutos?'; } }
   };
+  var IND_EXP = {
+    calm: { label: 'Calma', eye: 'open', ring: 'calm', talking: false, msg: 'Calma: acompaña el trabajo diario sin distraer ni invadir.' },
+    listen: { label: 'Escucha activa', eye: 'listen', ring: 'listen', talking: true, msg: 'Escucha activa: presta atención plena al tono y a las palabras del usuario.' },
+    empathy: { label: 'Empatía', eye: 'empathy', ring: 'empathy', talking: false, msg: 'Empatía: valida lo que sentís («parece frustrante») antes de dar consejos.' },
+    happy: { label: 'Alegría', eye: 'happy', ring: 'happy', talking: false, msg: 'Alegría: celebra avances y refuerza la confianza.' },
+    tired: { label: 'Pausa', eye: 'tired', ring: 'amber', talking: false, msg: 'Pausa: detecta largas jornadas seguidas y sugiere descansar unos minutos.' },
+    breath: { label: 'Respiración 4-6', eye: 'calm', ring: 'calm', talking: false, breath: true, msg: 'Respiración guiada: acompaña inhalaciones de 4 s y exhalaciones de 6 s.' }
+  };
+  var SC = { focus: [15, 10, 25], frus: [82, 72, 55], tired: [20, 15, 145] };
+  function syncScenarioChip() {
+    var match = null;
+    Object.keys(SC).forEach(function (k) {
+      var v = SC[k];
+      if (I.typing === v[0] && I.voice === v[1] && I.mins === v[2]) match = k;
+    });
+    setPressed('[data-sc]', 'data-sc', match);
+  }
+  function clearSayState() {
+    clearTimeout(I.sayTimer);
+    setPressed('[data-say]', 'data-say', null);
+    setPressed('[data-cexp]', 'data-cexp', null);
+    $('#btn-steps').setAttribute('aria-pressed', 'false');
+    if (!I.breathing) iSvg.classList.remove('breath-in', 'breath-out');
+  }
+  function paintIndExp(k) {
+    if (I.breathing) stopBreath();
+    clearSayState();
+    var d = IND_EXP[k] || IND_EXP.calm;
+    iSvg.classList.toggle('breath-in', !!d.breath);
+    setRobot(iSvg, d);
+    say(d.msg);
+    setExplain('Expresión facial · ' + d.label, d.msg);
+    I.last = 'exp:' + k;
+    setPressed('[data-cexp]', 'data-cexp', k);
+  }
+  $$('[data-cexp]').forEach(function (b) {
+    b.addEventListener('click', function () { paintIndExp(b.getAttribute('data-cexp')); });
+  });
   function paintInd(forceMsg) {
     $('#o-typing').textContent = typingWord(I.typing);
     $('#o-voice').textContent = voiceWord(I.voice);
@@ -857,20 +1024,25 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
     $('#ind-pill-d').textContent = s.desc;
     if (I.breathing) return;
     setRobot(iSvg, { eye: s.eye, ring: s.ring });
+    setExplain(s.expT, s.expD);
     if (forceMsg || k !== I.last) { say(s.msg()); I.last = k; }
     else if (k === 'tired') { say(s.msg()); }
   }
   function syncSliders() { sTyping.value = I.typing; sVoice.value = I.voice; sMins.value = I.mins; }
-  sTyping.addEventListener('input', function () { I.typing = +sTyping.value; paintInd(); });
-  sVoice.addEventListener('input', function () { I.voice = +sVoice.value; paintInd(); });
-  sMins.addEventListener('input', function () { I.mins = +sMins.value; paintInd(); });
-  var SC = { focus: [15, 10, 25], frus: [82, 72, 55], tired: [20, 15, 145] };
+  function onSliderInput() {
+    clearSayState();
+    syncScenarioChip();
+    paintInd();
+  }
+  sTyping.addEventListener('input', function () { I.typing = +sTyping.value; onSliderInput(); });
+  sVoice.addEventListener('input', function () { I.voice = +sVoice.value; onSliderInput(); });
+  sMins.addEventListener('input', function () { I.mins = +sMins.value; onSliderInput(); });
   $$('[data-sc]').forEach(function (b) {
     b.addEventListener('click', function () {
       if (I.breathing) stopBreath();
-      $('#steps-box').hidden = true;
-      var v = SC[b.getAttribute('data-sc')];
-      I.typing = v[0]; I.voice = v[1]; I.mins = v[2]; syncSliders(); paintInd(true);
+      clearSayState();
+      var k = b.getAttribute('data-sc'), v = SC[k];
+      I.typing = v[0]; I.voice = v[1]; I.mins = v[2]; syncSliders(); syncScenarioChip(); paintInd(true);
     });
   });
 
@@ -878,17 +1050,18 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
   function stopBreath() {
     I.breathing = false; clearTimeout(I.timer);
     iSvg.classList.remove('breath-in', 'breath-out');
-    btnBreath.textContent = 'Respirar juntos';
+    btnBreath.textContent = 'Respirar juntos (4-6)';
   }
   function startBreath() {
+    clearSayState();
     I.breathing = true; btnBreath.textContent = 'Detener';
-    $('#steps-box').hidden = true;
+    setExplain('Respiración guiada (4-6)', 'Guía 3 ciclos de inhalar 4 s y exhalar 6 s para bajar la tensión física antes de retomar.');
     var cycle = 0;
     function loop() {
       if (!I.breathing) return;
       if (cycle >= 3) {
         stopBreath();
-        I.typing = Math.max(0, I.typing - 30); I.voice = Math.max(0, I.voice - 30); syncSliders();
+        I.typing = Math.max(0, I.typing - 30); I.voice = Math.max(0, I.voice - 30); syncSliders(); syncScenarioChip();
         I.last = stateOf(); paintInd(false); say('Gracias por frenar un momento. ¿Cómo seguís?');
         return;
       }
@@ -904,34 +1077,42 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
     }
     loop();
   }
-  btnBreath.addEventListener('click', function () { if (I.breathing) { stopBreath(); paintInd(true); } else startBreath(); });
+  btnBreath.addEventListener('click', function () { clearSayState(); if (I.breathing) { stopBreath(); paintInd(true); } else startBreath(); });
   $('#btn-pause').addEventListener('click', function () {
+    clearSayState();
     if (I.breathing) stopBreath();
-    $('#steps-box').hidden = true;
-    I.mins = 0; syncSliders(); I.last = stateOf(); paintInd(false);
+    I.mins = 0; syncSliders(); syncScenarioChip(); I.last = stateOf(); paintInd(false);
     setRobot(iSvg, { eye: 'calm', ring: 'calm' });
     say('Dale, tomate dos minutos: estirá cuello y hombros. Te espero.');
+    setExplain('Pausa activa sugerida', 'Reinicia el contador sin pausa y propone despejarse 2 minutos para estirar cuello y hombros.');
   });
   $('#btn-steps').addEventListener('click', function () {
+    var active = $('#btn-steps').getAttribute('aria-pressed') === 'true';
+    clearSayState();
     if (I.breathing) stopBreath();
-    var box = $('#steps-box');
-    box.hidden = !box.hidden;
-    if (!box.hidden) {
+    if (!active) {
+      $('#btn-steps').setAttribute('aria-pressed', 'true');
       setRobot(iSvg, { eye: 'empathy', ring: 'empathy' });
       say('Desarmemos el agobio: elegí un primer paso chico de 5 minutos y arrancamos por ahí.');
+      setExplain('Plan anti-agobio en 3 pasos chicos', '1. Elegí una sola micro-tarea de 5 minutos · 2. Dejá el resto en pausa · 3. Al terminar, respirá y decidí el siguiente paso.');
     } else {
       paintInd(true);
     }
   });
-  $('#say-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var inp = $('#say-in'), t = inp.value.trim();
-    if (I.breathing) stopBreath();
-    setRobot(iSvg, { eye: 'empathy', ring: 'empathy', talking: true });
-    if (!t) { say('Contame con tus palabras, te escucho sin interrumpir.'); return; }
-    say('Si entendí bien: «' + t + '». Suena pesado, y es lógico que te frustre. ¿Probamos un primer paso chico o preferís frenar un momento?');
-    I.last = 'said'; inp.value = '';
-    setTimeout(function () { setRobot(iSvg, { eye: 'empathy', ring: 'empathy', talking: false }); }, 2200);
+  $$('[data-say]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var phrase = b.getAttribute('data-say');
+      if (I.breathing) stopBreath();
+      clearSayState();
+      setPressed('[data-say]', 'data-say', phrase);
+      setRobot(iSvg, { eye: 'empathy', ring: 'empathy', talking: true });
+      say('Si entendí bien: «' + phrase + '». Suena pesado, y es lógico que te frustre. ¿Probamos un primer paso chico o preferís frenar un momento?');
+      setExplain('Escucha activa ante «' + phrase + '»', 'Primero reformula lo que dijo el usuario («Si entendí bien…») y valida su emoción («es lógico que te frustre») antes de proponer una solución.');
+      I.last = 'said';
+      I.sayTimer = setTimeout(function () {
+        if (!I.breathing && I.last === 'said') setRobot(iSvg, { eye: 'empathy', ring: 'empathy', talking: false });
+      }, 2200);
+    });
   });
 
   /* ---------- 3. Modo Grupal (6 integrantes en 3x2, carcasas de distintos colores) ---------- */
@@ -961,7 +1142,9 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
     var p = PRE[k];
     G.talk = p.talk.slice(); G.clock = p.clock; G.last = p.ago.map(function (a) { return p.clock - a; });
     G.speaker = p.speaker; G.intr = p.intr.slice(); G.by = p.by === undefined ? -1 : p.by; G.of = p.of === undefined ? -1 : p.of;
-    G.running = run; paintGrp();
+    G.running = run;
+    setPressed('[data-pre]', 'data-pre', k);
+    paintGrp();
   }
   function fmt(s) { s = Math.floor(s); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
   function nm(i) { return (G.names[i] || '').trim() || ('Integrante ' + (i + 1)); }
@@ -1059,7 +1242,7 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
   })();
 
   function toggleSpeak(i) {
-    if (G.speaker === i) { G.last[i] = G.clock; G.speaker = -1; }
+    if (G.speaker === i) { G.last[i] = G.clock; G.speaker = -1; G.running = false; }
     else {
       if (G.speaker >= 0) { G.last[G.speaker] = G.clock; G.intr.push(G.clock); G.by = i; G.of = G.speaker; }
       G.speaker = i; G.last[i] = G.clock;
@@ -1078,7 +1261,7 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
       bt.textContent = x.talking ? 'Ceder palabra' : 'Hablar';
       bt.setAttribute('aria-pressed', String(x.talking));
       var bb = $('.bubble', c);
-      bb.textContent = x.msg || (G.sync ? 'Atento a la charla.' : 'Sin sincronizar.');
+      bb.textContent = x.msg || 'Atento a la charla.';
       bb.classList.toggle('quiet', !x.msg);
       $('svg', c).setAttribute('aria-label', 'MOOD-E de ' + nm(i));
     });
@@ -1091,10 +1274,6 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
     $('#g-clima-t').textContent = a.clima.t;
     $('#g-clima-d').textContent = a.clima.d;
     $('#g-intr').textContent = String(a.recent);
-    $('#g-clock').textContent = 'Tiempo simulado ' + fmt(G.clock);
-    $('#g-run').textContent = G.running ? 'Pausar' : (G.clock > 0 ? 'Reanudar' : 'Iniciar reunión');
-    $('#g-net').classList.toggle('off', !G.sync);
-    $('#g-net-txt').textContent = G.sync ? 'Red Wi-Fi activa' : 'Modo aislado';
   }
 
   setInterval(function () {
@@ -1105,14 +1284,32 @@ footer { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; j
     paintGrp();
   }, 250);
 
-  $('#g-run').addEventListener('click', function () { G.running = !G.running; paintGrp(); });
-  $('#g-reset').addEventListener('click', function () {
-    G.talk = [0, 0, 0, 0, 0, 0]; G.last = [0, 0, 0, 0, 0, 0]; G.clock = 0; G.speaker = -1; G.intr = []; G.by = -1; G.of = -1; G.running = false; paintGrp();
-  });
-  $('#g-sync').addEventListener('change', function (e) { G.sync = e.target.checked; paintGrp(); });
-  $$('[data-pre]').forEach(function (b) { b.addEventListener('click', function () { applyPreset(b.getAttribute('data-pre'), true); }); });
+  $$('[data-pre]').forEach(function (b) { b.addEventListener('click', function () { applyPreset(b.getAttribute('data-pre'), false); }); });
+
+  /* ---------- 4. Conclusión · Salvapantallas vivo de MOOD-E ---------- */
+  var sHost = $('#saver-face-host');
+  sHost.innerHTML = saverFaceSVG();
+  var sSvg = sHost.firstChild;
+  var SAVER_FRAMES = [
+    { eye: 'open', ring: 'calm', lx: 0 },
+    { eye: 'happy', ring: 'happy', lx: 0 },
+    { eye: 'open', ring: 'calm', lx: -2.4 },
+    { eye: 'listen', ring: 'listen', lx: 2.2 },
+    { eye: 'empathy', ring: 'empathy', lx: 0 },
+    { eye: 'calm', ring: 'calm', lx: 0 }
+  ];
+  var saverIdx = 0;
+  function stepSaver() {
+    setRobot(sSvg, SAVER_FRAMES[saverIdx]);
+    saverIdx = (saverIdx + 1) % SAVER_FRAMES.length;
+  }
+  stepSaver();
+  setInterval(function () {
+    if (!$('#view-end').hidden) stepSaver();
+  }, 4200);
 
   /* ---------- Arranque ---------- */
+  syncScenarioChip();
   paintInd(true);
   applyPreset('silencio', false);
   showTab(location.hash.replace('#', ''));

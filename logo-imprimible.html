@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>MOOD-E · Logo Circular Imprimible</title>
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@700;800&display=swap">
+  <style>
+    :root {
+      --bg: #0B1618;
+      --surface: #122125;
+      --stage: #0D1B1E;
+      --fg: #E6F1F1;
+      --muted: #9CB2B5;
+      --line: #233A3F;
+      --accent: #38D9C8;
+      --font-display: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.5;
+      padding: 20px 18px 40px;
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    h1, h2 { font-family: var(--font-display); margin: 0; }
+    h1 { font-size: 28px; font-weight: 800; }
+    .muted { color: var(--muted); }
+    .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn {
+      font: 600 14px var(--font-body);
+      padding: 9px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--fg);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 40px;
+    }
+
+    .btn:hover { border-color: var(--accent); }
+    .btn.primary { background: var(--accent); color: #052124; border-color: var(--accent); }
+    .btn[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 22%, var(--surface)); border-color: var(--accent); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .preview-stage {
+      background: #1B2328;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      min-height: 360px;
+    }
+
+    .preview-stage svg {
+      width: min(280px, 72vw);
+      height: auto;
+      filter: drop-shadow(0 16px 32px rgba(0, 0, 0, .55));
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .size-box {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .size-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .sheet-preview {
+      background: #ffffff;
+      color: #111111;
+      border-radius: 14px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .sheet-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #333333;
+      text-align: center;
+    }
+
+    .cut-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cut-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cut-ring {
+      border: 1px dashed #999999;
+      border-radius: 50%;
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cut-lbl {
+      font-size: 11px;
+      font-weight: 700;
+      color: #444444;
+    }
+
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    @page {
+      size: A4;
+      margin: 12mm;
+    }
+
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 0;
+      }
+      .no-print { display: none !important; }
+      .wrap { max-width: none; }
+      .grid { display: block; }
+      .card {
+        border: 0;
+        padding: 0;
+        background: #ffffff !important;
+      }
+      .sheet-preview {
+        padding: 0;
+        border-radius: 0;
+      }
+      .cut-grid {
+        gap: 10mm;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="no-print">
+      <div>
+        <span class="eyebrow">MOOD-E · Tapa superior de maqueta</span>
+        <h1>Logo circular imprimible</h1>
+        <p class="muted">Diseño tipográfico minimalista con énfasis en la E estilo WALL-E, centrado y listo para descargar o imprimir a medida real para recortar y pegar.</p>
+      </div>
+      <div class="nav-links">
+        <a class="btn" href="./mood-e.html">← Volver al simulador</a>
+        <a class="btn" href="./index.html">Pantalla celular</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card no-print">
+        <span class="eyebrow">1 · Color de la insignia E</span>
+        <div class="row" id="color-btns">
+          <button class="btn" data-col="#38D9C8" aria-pressed="true" type="button">
+            <span class="swatch" style="background:#38D9C8"></span>Turquesa MOOD-E
+          </button>
+          <button class="btn" data-col="#E85D4A" aria-pressed="false" type="button">
+            <span class="swatch" style="background:#E85D4A"></span>Coral WALL-E
+          </button>
+          <button class="btn" data-col="#F2B45A" aria-pressed="false" type="button">
+            <span class="swatch" style="background:#F2B45A"></span>Ámbar cálido
+          </button>
+        </div>
+
+        <div class="size-box">
+          <div class="size-top">
+            <label for="mm-range">2 · Medida del círculo principal en la hoja</label>
+            <span id="mm-out">55 mm</span>
+          </div>
+          <input id="mm-range" type="range" min="30" max="90" step="1" value="55">
+        </div>
+
+        <div class="preview-stage" id="preview-stage"></div>
+
+        <div class="row">
+          <button class="btn primary" id="btn-print" type="button">Imprimir hoja A4 (tamaño real)</button>
+          <button class="btn" id="btn-png" type="button">Descargar PNG (2048×2048)</button>
+          <button class="btn" id="btn-svg" type="button">Descargar SVG</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="eyebrow no-print">Planilla lista para imprimir en A4 y recortar por la línea punteada</span>
+        <div class="sheet-preview">
+          <div class="sheet-title">MOOD-E · Planilla de recorte a escala real (A4 al 100%, sin «ajustar a página»)</div>
+          <div class="cut-grid" id="cut-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const $ = (s) => document.querySelector(s);
+      const $$ = (s) => Array.from(document.querySelectorAll(s));
+
+      let accent = '#38D9C8';
+      let mainMm = 55;
+      let uid = 0;
+
+      function buildLogoSVG(col) {
+        const gid = 'lg' + (++uid);
+        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Logo circular MOOD-E">
+          <defs>
+            <radialGradient id="${gid}" cx="50%" cy="38%" r="65%">
+              <stop offset="0%" stop-color="#171D24"/>
+              <stop offset="100%" stop-color="#07090C"/>
+            </radialGradient>
+          </defs>
+          <circle cx="256" cy="256" r="248" fill="url(#${gid})"/>
+          <circle cx="256" cy="256" r="236" fill="none" stroke="${col}" stroke-width="3" opacity="0.65"/>
+          <circle cx="256" cy="256" r="224" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1.5"/>
+          <g transform="translate(256 256) scale(1.12) translate(-256 -264)">
+            <path d="M 83 290 V 238 L 107 268 L 131 238 V 290" fill="none" stroke="#F4F8F8" stroke-width="12.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="152" y="238" width="42" height="52" rx="20" fill="none" stroke="#F4F8F8" stroke-width="12.5"/>
+            <rect x="214" y="238" width="42" height="52" rx="20" fill="none" stroke="#F4F8F8" stroke-width="12.5"/>
+            <path d="M 277 238 H 295 A 24 26 0 0 1 295 290 H 277 Z" fill="none" stroke="#F4F8F8" stroke-width="12.5" stroke-linejoin="round"/>
+            <circle cx="340" cy="264" r="5" fill="#9BB4B6"/>
+            <circle cx="393" cy="264" r="42" fill="${col}"/>
+            <path d="M 408 242 H 378 V 286 H 408 M 378 264 H 403" fill="none" stroke="#07090C" stroke-width="10.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+        </svg>`;
+      }
+
+      function render() {
+        const svgStr = buildLogoSVG(accent);
+        $('#preview-stage').innerHTML = svgStr;
+        $('#mm-out').textContent = mainMm + ' mm';
+
+        const sizes = [mainMm, 40, 45, 50, 60, 70];
+        const unique = [];
+        sizes.forEach((s, idx) => {
+          if (idx === 0 || s !== mainMm) unique.push({ mm: s, main: idx === 0 });
+        });
+
+        $('#cut-grid').innerHTML = unique.map((item) => {
+          const sized = svgStr.replace('width="512" height="512"', `style="width:${item.mm}mm;height:${item.mm}mm;display:block"`);
+          return `
+            <div class="cut-item">
+              <div class="cut-ring">${sized}</div>
+              <span class="cut-lbl">${item.main ? 'Elegido: ' : ''}${item.mm} mm</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      $$('#color-btns button').forEach((b) => {
+        b.addEventListener('click', () => {
+          accent = b.getAttribute('data-col');
+          document.documentElement.style.setProperty('--accent', accent);
+          $$('#color-btns button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+          render();
+        });
+      });
+
+      $('#mm-range').addEventListener('input', (e) => {
+        mainMm = parseInt(e.target.value, 10) || 55;
+        render();
+      });
+
+      $('#btn-print').addEventListener('click', () => window.print());
+
+      $('#btn-svg').addEventListener('click', () => {
+        const blob = new Blob([buildLogoSVG(accent)], { type: 'image/svg+xml;charset=utf-8' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'logo-mood-e.svg';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+      });
+
+      $('#btn-png').addEventListener('click', () => {
+        const svgStr = buildLogoSVG(accent);
+        const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = 2048;
+          canvas.height = 2048;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, 2048, 2048);
+          URL.revokeObjectURL(url);
+          canvas.toBlob((pngBlob) => {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(pngBlob);
+            a.download = 'logo-mood-e-2048.png';
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+          }, 'image/png');
+        };
+        img.src = url;
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
